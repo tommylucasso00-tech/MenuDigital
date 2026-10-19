@@ -1,0 +1,42 @@
+{
+  "nombre": "COFFE BAR",
+  "descripcion": "Caféteria - 100% GRANO COLOMBIANO",
+  "logo": "https://media.istockphoto.com/id/849418084/es/vector/negra-sello-caf%C3%A9.jpg?s=612x612&w=0&k=20&c=Nsx7glGK2ajvwoCsGLmGhtnNWVSRMOD7V1XqDePOYSM=",
+  "acento": "#000000",
+  "fondo": "https://img.magnific.com/foto-gratis/diseno-diseno-fondo-pared-marron-liso-abstracto-plantilla-web-informe-comercial-color-degradado-circulo-suave_1258-54600.jpg?semt=ais_hybrid&w=740&q=80",
+  "fondoIntensidad": 75,
+  "estilo": "oscuro",
+  "cartaUrl": "https://www.wonderlandcafe.cl/carta",
+  "mapsUrl": "https://maps.app.goo.gl/VdsvSqVMANPhMau8A",
+  "resenaUrl": "https://www.google.com/maps/place/Cafeter%C3%ADa+Cachito/@-35.429344,-71.7402935,13z/data=!4m12!1m2!2m1!1scafeteria!3m8!1s0x9665c73e9d2e059b:0x4c294ed82a724d59!8m2!3d-35.4293376!4d-71.6640459!9m1!1b1!15sCgljYWZldGVyaWFaCyIJY2FmZXRlcmlhkgEMZXNwcmVzc29fYmFymgFEQ2k5RFFVbFJRVU52WkVOb2RIbGpSamx2VDIxS2VGZFlhRkpZTUZwelpVVTBOV1JJUW1oalIxcHFaVmhhVTFaV1JSQULgAQD6AQQIABBH!16s%2Fg%2F11z2t71c6p?entry=ttu&g_ep=EgoyMDI2MTAxMy4wIKXMDSoASAFQAw%3D%3D",
+  "redes": [
+    {
+      "nombre": "Instagram",
+      "url": "https://instagram.com/cafeteriachile"
+    },
+    {
+      "nombre": "WhatsApp",
+      "url": "https://wa.me/56990791515"
+    },
+    {
+      "nombre": "Facebook",
+      "url": "https://facebook.com/cafeteriatalca"
+    },
+    {
+      "nombre": "TikTok",
+      "url": "https://tiktok.com/@cafeteria"
+    },
+    {
+      "nombre": "YouTube",
+      "url": "cafeteria"
+    }
+  ],
+  "transferencia": {
+    "Titular": "CAFETERIA .SPA",
+    "RUT": "7777777-7",
+    "Banco": "Banco Estado",
+    "Tipo de cuenta": "Vista",
+    "N° de cuenta": "909077777777",
+    "Correo": "++++++@gmail.com"
+  }
+}
