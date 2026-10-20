@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Menú digital personalizado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#edf4f0;--surface:rgba(255,255,255,.93);--ink:#172521;--muted:#62736f;
+  --line:rgba(73,94,85,.16);--accent:#0F766E;--on-accent:#FFFFFF;
+  --shadow:0 18px 48px rgba(13,37,30,.11);color-scheme:light;
+}
+:root[data-estilo="oscuro"]{
+  --bg:#111b1b;--surface:rgba(23,32,33,.91);--ink:#f3f6f5;--muted:#adbdba;
+  --line:rgba(233,250,242,.15);--shadow:0 20px 52px rgba(0,0,0,.27);color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{min-height:100%}
+body{margin:0;position:relative;isolation:isolate;min-height:100vh;background:var(--bg);color:var(--ink);font-family:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+/* El papel tapiz sigue el alto total del documento, sin parallax ni olas. */
+.wallpaper{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;isolation:isolate}
+.wallpaper-art{position:absolute;inset:0;background-image:radial-gradient(ellipse at 20% 6%, #c6e2d5, transparent 54%),radial-gradient(ellipse at 95% 85%, #e5e4d3, transparent 48%);background-size:cover;background-position:center;background-repeat:no-repeat}
+:root[data-estilo="oscuro"] .wallpaper-art{background-color:#111b1b;background-image:radial-gradient(ellipse at 20% 6%, #274743, transparent 55%),radial-gradient(ellipse at 90% 80%, #282b36, transparent 56%)}
+/* Burbujas de vidrio: la capa sigue la pantalla; no intercepta clics y queda por debajo del menú. */
+/* El lienzo se ajusta al viewport VISIBLE, no a 100dvh (que fluctúa al mostrar
+   u ocultar las barras del navegador móvil). Las dimensiones las fija JS. */
+.burbujas-lienzo{position:fixed;top:0;left:0;z-index:0;display:block;width:100vw;height:100vh;pointer-events:none;transform:translate3d(0,0,0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
+@media(prefers-reduced-motion:reduce){.burbujas-lienzo{display:none!important}}
+.wash{position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,rgba(244,250,247,.18) 0%,rgba(244,250,247,.34) 70%,rgba(244,250,247,.5) 100%)}
+:root[data-estilo="oscuro"] .wash{background:linear-gradient(180deg,rgba(4,10,9,.24),rgba(4,10,9,.45))}
+.wrap{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:42px 20px 44px}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.hero,.panel{background:var(--surface);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+.hero{padding:27px 25px 28px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--accent)}
+/* La promoción usa el espacio libre junto al logo, sin modificar la cabecera inferior. */
+.hero-top{display:flex;align-items:stretch;gap:13px;min-width:0}
+.logo{flex:0 0 78px;width:78px;height:78px;border-radius:23px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-size:32px;font-weight:800;overflow:hidden;box-shadow:0 9px 23px rgba(0,0,0,.1)}
+.oferta-link{position:relative;isolation:isolate;display:flex;flex:1;min-width:0;min-height:78px;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px 12px 17px;border-radius:21px;color:var(--on-accent);background:var(--accent);background:linear-gradient(117deg,var(--accent),color-mix(in srgb,var(--accent) 79%,#091c2c));border:1px solid rgba(255,255,255,.24);box-shadow:0 10px 25px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.30);overflow:hidden;transition:transform .2s ease,box-shadow .2s ease}
+.oferta-link::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 12% -45%,rgba(255,255,255,.38),transparent 66%),linear-gradient(110deg,transparent 48%,rgba(255,255,255,.055) 56%,transparent 65%)}
+.oferta-link:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(0,0,0,.17),inset 0 1px 0 rgba(255,255,255,.35)}
+.oferta-link:active{transform:scale(.985)}
+.oferta-contenido{display:block;min-width:0;position:relative}
+.oferta-kicker{display:flex;align-items:center;gap:6px;font-size:9px;font-weight:800;letter-spacing:.15em;line-height:1.2;margin-bottom:5px;opacity:.84}
+.oferta-kicker::before{content:"";flex:none;width:5px;height:5px;border-radius:50%;background:currentColor;box-shadow:0 0 0 3px rgba(255,255,255,.14)}
+.oferta-titulo{display:block;font-size:clamp(12px,3.8vw,16px);font-weight:800;letter-spacing:-.035em;line-height:1.22;overflow-wrap:anywhere}
+.oferta-flecha{flex:0 0 31px;width:31px;height:31px;border:1px solid rgba(255,255,255,.27);border-radius:50%;background:rgba(255,255,255,.12);display:grid;place-items:center}
+.oferta-flecha svg{display:block;width:17px;height:17px}
+@media(max-width:375px){.hero-top{gap:10px}.oferta-link{padding:9px 10px 9px 12px;border-radius:18px}.oferta-kicker{font-size:8px}.oferta-flecha{flex-basis:27px;width:27px;height:27px}}
+
+.logo img{width:100%;height:100%;object-fit:cover}
+h1{font-size:clamp(26px,7.5vw,34px);font-weight:800;letter-spacing:-.045em;line-height:1.15;margin:19px 0 0;overflow-wrap:anywhere}
+.desc{font-size:14px;color:var(--muted);margin:9px 0 0;max-width:40ch;line-height:1.65;white-space:pre-line}
+.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-top:21px}
+.btn{display:flex;align-items:center;justify-content:center;gap:9px;min-width:0;padding:14px 12px;border-radius:16px;font-weight:800;font-size:14px;border:1px solid var(--line);background:var(--surface);box-shadow:0 5px 18px rgba(0,0,0,.04);transition:transform .16s,box-shadow .16s,border-color .16s;text-align:center}
+.btn:hover{transform:translateY(-2px);box-shadow:0 9px 22px rgba(0,0,0,.08);border-color:var(--accent)}
+.btn:active{transform:scale(.98)}
+.btn.main{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn svg{width:19px;height:19px;flex:none}
+.actions .btn:only-child,.actions .btn.big{grid-column:1/-1}
+.btn.big{padding:18px 14px;font-size:16px;border-radius:18px}
+.panel{margin-top:16px;padding:24px 22px}
+.panel h2{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:800;letter-spacing:-.02em;margin:0 0 18px}
+.panel h2::before{content:"";width:5px;height:21px;border-radius:8px;background:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chips .btn{font-size:13px;border-radius:15px;padding:9px 13px 9px 9px;flex:1 1 132px;max-width:100%;justify-content:flex-start;font-weight:750}
+.social-symbol{width:35px;height:35px;min-width:35px;display:grid;place-items:center;border-radius:11px;background:#eaf2ee;overflow:hidden}
+.social-symbol svg{width:23px;height:23px;display:block}
+.social-symbol.instagram{background:linear-gradient(140deg,#fae3a2,#ffe2ed 45%,#eadcfc)}
+.social-symbol.whatsapp{background:#e4f8e9}
+.social-symbol.facebook{background:#e5f0ff}
+.social-symbol.tiktok{background:#e8ebf0}
+.social-symbol.youtube{background:#ffeded}
+.social-symbol.x{background:#e7e8eb}
+.social-symbol.web{background:#e4f4f1}
+:root[data-estilo="oscuro"] .social-symbol{filter:saturate(.95)}
+.card{border:1px solid var(--line);border-radius:18px;padding:3px 15px;margin-top:0;background:rgba(125,155,143,.055)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 2px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row>div{min-width:0}
+.row small{display:block;color:var(--muted);font-size:11px;margin-bottom:3px}
+.row span{display:block;font-weight:750;font-size:13px;overflow-wrap:anywhere}
+.copy{flex:none;padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-size:12px;font-weight:800;transition:background .15s}
+.copy:hover{border-color:var(--accent)}
+.copy.ok{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.copyall{width:100%;margin-top:12px;background:var(--accent);color:var(--on-accent);border-color:var(--accent);padding:13px}
+footer{margin-top:27px;text-align:center;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.01em;text-shadow:0 1px 8px var(--surface)}
+.visor{position:fixed;inset:0;z-index:50;background:rgba(8,14,12,.95);display:flex;flex-direction:column}
+.visor-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;padding-top:max(12px,env(safe-area-inset-top));color:#fff;font-weight:800;font-size:14px}
+.visor-bar button{padding:9px 15px;border-radius:12px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:#fff;font-weight:800;font-size:13px}
+.visor-body{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:0 12px max(24px,env(safe-area-inset-bottom))}
+.visor-body img{display:block;width:100%;max-width:900px;margin:0 auto 12px;border-radius:10px;background:#fff}
+[hidden]{display:none!important}
+@media(max-width:375px){.wrap{padding:20px 13px 36px}.hero{padding:23px 19px}.panel{padding:20px 16px}.actions{gap:8px}.actions .btn{font-size:12px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wallpaper" aria-hidden="true"><div class="wallpaper-art" id="fondo"></div></div>
+<div class="wash" aria-hidden="true"></div>
+<canvas class="burbujas-lienzo" id="burbujas-lienzo" aria-hidden="true"></canvas>
+<main class="wrap">
+  <header class="hero">
+    <div class="hero-top">
+      <div class="logo" id="logo"></div>
+      <a class="oferta-link" id="oferta-link" href="#" target="_blank" rel="noopener noreferrer" hidden>
+        <span class="oferta-contenido">
+          <span class="oferta-kicker">DESTACADO</span>
+          <span class="oferta-titulo" id="oferta-titulo">OFERTAS DEL DÍA</span>
+        </span>
+        <span class="oferta-flecha" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span>
+      </a>
+    </div>
+    <h1 id="nombre"></h1>
+    <p class="desc" id="desc"></p>
+  </header>
+
+  <div class="actions" id="actions"></div>
+
+  <section id="redes-sec" class="panel" hidden>
+    <h2>Síguenos</h2>
+    <div class="chips" id="redes"></div>
+  </section>
+
+  <section id="pago-sec" class="panel" hidden>
+    <h2>Datos de transferencia</h2>
+    <div class="card" id="pago"></div>
+    <button class="btn copyall" id="copyall">Copiar todos los datos</button>
+  </section>
+
+  <footer id="footer"></footer>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const ICON = {
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v17H6a2 2 0 0 0-2 2z"/><path d="M4 20V5"/></svg>',
+  pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>'
+};
+
+/* Iconos con colores de marca, sin bibliotecas externas. */
+const SOCIAL = {
+  instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="#C13584" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.2"/><circle cx="12" cy="12" r="4.05"/><circle cx="17.5" cy="6.6" r="1.2" fill="#F56040" stroke="none"/></svg>',
+  whatsapp: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#25D366" d="M12.02 2a9.98 9.98 0 0 0-8.6 15.08L2 22l5.08-1.34A10 10 0 1 0 12.02 2Z"/><path fill="#fff" d="M17.8 14.67c-.22-.12-1.36-.68-1.57-.76-.22-.07-.37-.11-.53.12-.15.22-.6.76-.73.91-.14.15-.27.17-.49.06a7.5 7.5 0 0 1-2.2-1.35 8.2 8.2 0 0 1-1.52-1.88c-.16-.27 0-.4.11-.53.1-.1.22-.27.33-.4.12-.13.15-.23.23-.38.07-.15.04-.28-.02-.4-.05-.1-.53-1.26-.73-1.72-.2-.46-.39-.4-.54-.41h-.45c-.15 0-.4.06-.61.28-.21.22-.8.78-.8 1.9s.82 2.2.94 2.35c.11.15 1.61 2.45 3.9 3.44.54.24.97.38 1.3.49.54.17 1.03.15 1.42.09.43-.06 1.36-.55 1.55-1.08.19-.54.19-1 .14-1.08-.06-.1-.2-.15-.42-.27Z"/></svg>',
+  facebook: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" fill="#1877F2"/><path d="M14.1 21V13.3h2.5l.35-3.05H14.1V8.3c0-.89.24-1.5 1.53-1.5h1.47V4.1a20 20 0 0 0-2.12-.1c-2.1 0-3.54 1.28-3.54 3.63v2.62H9v3.05h2.44V21Z" fill="#fff"/></svg>',
+  tiktok: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#25F4EE" d="M14 2h2.6c.2 2.1 1.45 3.5 3.5 3.6v2.8c-1.4 0-2.6-.4-3.65-1.1v6.6a5.55 5.55 0 1 1-5.6-5.53c.45 0 .83.04 1.18.13v2.9a2.7 2.7 0 1 0 1.97 2.6V2Z"/><path fill="#FE2C55" d="M15 2h2.4c.25 2.05 1.36 3.4 3.3 3.57v2.64c-1.36-.03-2.65-.42-3.7-1.11v6.78a5.5 5.5 0 0 1-9.4 3.84 5.5 5.5 0 0 1 3.42-9.3v2.87a2.7 2.7 0 1 0 3.98 2.38V2Z" opacity=".78"/><path fill="#20252b" d="M14.5 2h2.15c.2 2.03 1.45 3.33 3.32 3.52v2.05A7 7 0 0 1 16.6 6.3v7.3a5.3 5.3 0 1 1-5.3-5.23v2.55a2.75 2.75 0 1 0 3.2 2.72V2Z"/></svg>',
+  youtube: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4.3" fill="#FF0033"/><path d="m10 8.2 6 3.8-6 3.8Z" fill="#fff"/></svg>',
+  x: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" fill="#16191d"/><path d="M6.5 6.3h2.8l8.4 11.4h-2.8Zm10.6 0h1.5L7.2 17.7H5.7Z" fill="#fff"/></svg>',
+  web: '<svg viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>'
+};
+function tipoRed(r){
+  const k = (String(r.nombre || '') + ' ' + String(r.url || '')).toLowerCase();
+  if (/instagram/.test(k)) return 'instagram';
+  if (/whatsapp|wa\.me/.test(k)) return 'whatsapp';
+  if (/facebook|fb\.com/.test(k)) return 'facebook';
+  if (/tiktok/.test(k)) return 'tiktok';
+  if (/youtube|youtu\.be/.test(k)) return 'youtube';
+  if (/twitter|x\.com/.test(k)) return 'x';
+  return 'web';
+}
+function iconoRed(r){
+  const red = tipoRed(r);
+  return '<span class="social-symbol ' + red + '">' + SOCIAL[red] + '</span>';
+}
+
+function toast(btn){
+  const old = btn.textContent;
+  btn.textContent = '¡Copiado!'; btn.classList.add('ok');
+  setTimeout(() => { btn.textContent = old; btn.classList.remove('ok'); }, 1400);
+}
+async function copiar(texto, btn){
+  try { await navigator.clipboard.writeText(texto); }
+  catch(e){ // respaldo para navegadores sin permiso de portapapeles
+    const t = document.createElement('textarea'); t.value = texto; t.style.position='fixed'; t.style.opacity='0';
+    document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove();
+  }
+  toast(btn);
+}
+
+/* Visor de carta: muestra las páginas subidas como imágenes dentro del menú */
+function abrirVisor(imgs, origen, nombre){
+  const v = el('div', 'visor');
+  v.setAttribute('role', 'dialog'); v.setAttribute('aria-modal', 'true'); v.setAttribute('aria-label', nombre);
+  const barra = el('div', 'visor-bar'); barra.appendChild(el('span', null, nombre));
+  const x = el('button', null, 'Cerrar ✕'); x.type = 'button';
+  const cuerpo = el('div', 'visor-body');
+  imgs.forEach((src, i) => {
+    const im = el('img'); im.src = src; im.alt = nombre + ', página ' + (i + 1) + ' de ' + imgs.length; cuerpo.appendChild(im);
+  });
+  const tecla = e => { if (e.key === 'Escape') cerrar(); };
+  const cerrar = () => { v.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', tecla); if (origen) origen.focus(); };
+  x.onclick = cerrar; document.addEventListener('keydown', tecla);
+  barra.appendChild(x); v.appendChild(barra); v.appendChild(cuerpo);
+  document.body.appendChild(v); document.body.style.overflow = 'hidden'; x.focus();
+}
+
+function render(C){
+/* Seguridad: los datos pueden venir en el link, así que solo se aceptan links http(s) y colores hex */
+const seg = u => /^https?:\/\//i.test(u || '') ? u : '';
+/* Las imágenes también pueden venir guardadas dentro del archivo de datos (PNG, JPG o WebP en base64) */
+const segImg = u => (/^https?:\/\//i.test(u || '') || /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+\/=]+$/.test(u || '')) ? u : '';
+C.cartaUrl = seg(C.cartaUrl); C.mapsUrl = seg(C.mapsUrl); C.resenaUrl = seg(C.resenaUrl); C.logo = segImg(C.logo); C.fondo = segImg(C.fondo);
+C.ofertaUrl = seg(C.ofertaUrl);
+/* El PNG de la promoción se incrusta en el JSON y se muestra dentro del menú. */
+C.ofertaImagen = (typeof C.ofertaImagen === 'string' && /^data:image\/png;base64,[A-Za-z0-9+\/=]+$/.test(C.ofertaImagen)) ? C.ofertaImagen : '';
+C.cartaImagenes = (Array.isArray(C.cartaImagenes) ? C.cartaImagenes : []).filter(u => segImg(u)).slice(0, 12);
+if (!/^#[0-9a-f]{3,8}$/i.test(C.acento || '')) C.acento = '';
+C.nombre = C.nombre || ''; C.descripcion = C.descripcion || '';
+const cat = C.tipoCarta === 'catalogo';   // restaurante: "Ver carta" · negocio: "Ver catálogo"
+C.redes = (Array.isArray(C.redes) ? C.redes : []).filter(r => r && seg(r.url)); C.transferencia = C.transferencia || {};
+if (C.estilo === 'oscuro') document.documentElement.dataset.estilo = 'oscuro';
+/* Cabecera */
+document.title = C.nombre + ' · ' + (cat ? 'Catálogo digital' : 'Menú digital');
+if (C.acento) {
+  document.documentElement.style.setProperty('--accent', C.acento);
+  const n = C.acento.slice(1);
+  if (n.length === 6 || n.length === 3){
+    const hex = n.length === 3 ? [...n].map(x => x+x).join('') : n;
+    const rgb = [0,2,4].map(i => parseInt(hex.slice(i,i+2),16)/255);
+    const lin = rgb.map(x => x <= .04045 ? x / 12.92 : Math.pow((x+.055)/1.055,2.4));
+    const luz = lin[0]*.2126 + lin[1]*.7152 + lin[2]*.0722;
+    document.documentElement.style.setProperty('--on-accent',luz>.42 ? '#172521' : '#FFFFFF');
+  }
+}
+if (C.fondo){
+  const fondo = $('fondo');
+  fondo.style.backgroundImage = 'url(' + JSON.stringify(C.fondo) + ')';
+  const intensidad = Number(C.fondoIntensidad);
+  fondo.style.opacity = String(Number.isFinite(intensidad) && C.fondoIntensidad !== undefined ? Math.min(100,Math.max(0,intensidad))/100 : .72);
+}
+$('nombre').textContent = C.nombre;
+$('desc').textContent = C.descripcion;
+if (C.logo){ const i = el('img'); i.src = C.logo; i.alt = ''; i.onerror = () => { i.remove(); $('logo').textContent = C.nombre.charAt(0).toUpperCase(); }; $('logo').appendChild(i); }
+else $('logo').textContent = C.nombre.charAt(0).toUpperCase();
+
+/* Promoción opcional: imagen PNG interna o link externo, nunca protocolos no seguros. */
+if (C.ofertaActiva === true && (C.ofertaTipo === 'png' ? C.ofertaImagen : C.ofertaUrl)){
+  const enlace = $('oferta-link');
+  const texto = String(C.ofertaTexto || '').trim().slice(0, 80) || 'OFERTAS DEL DÍA';
+  $('oferta-titulo').textContent = texto;
+  if (C.ofertaTipo === 'png'){
+    enlace.href = '#promocion';
+    enlace.removeAttribute('target');
+    enlace.setAttribute('aria-label', 'Ver imagen de ' + texto);
+    enlace.onclick = e => { e.preventDefault(); abrirVisor([C.ofertaImagen], enlace, texto); };
+  } else {
+    enlace.href = C.ofertaUrl;
+    enlace.target = '_blank';
+    enlace.rel = 'noopener noreferrer';
+    enlace.onclick = null;
+    enlace.setAttribute('aria-label', texto + ' (se abre en una pestaña nueva)');
+  }
+  enlace.hidden = false;
+}
+
+/* Botones principales */
+function accion(texto, url, icono, main, big){
+  const a = el('a', 'btn' + (main ? ' main' : '') + (big ? ' big' : ''));
+  a.href = url; a.target = '_blank'; a.rel = 'noopener';
+  a.innerHTML = icono; a.appendChild(document.createTextNode(texto));
+  $('actions').appendChild(a);
+}
+if (C.cartaImagenes.length){
+  const b = el('button', 'btn main big'); b.type = 'button'; b.innerHTML = ICON.book; b.appendChild(document.createTextNode(cat ? 'Ver catálogo' : 'Ver carta'));
+  b.onclick = () => abrirVisor(C.cartaImagenes, b, cat ? 'Catálogo' : 'Carta'); $('actions').appendChild(b);
+} else if (C.cartaUrl) accion(cat ? 'Ver catálogo' : 'Ver carta', C.cartaUrl, ICON.book, true, true);
+if (C.mapsUrl) accion('Cómo llegar', C.mapsUrl, ICON.pin);
+if (C.resenaUrl) accion('Dejar reseña', C.resenaUrl, ICON.star);
+if (!$('actions').children.length) $('actions').hidden = true;
+
+/* Redes */
+if (C.redes.length){
+  $('redes-sec').hidden = false;
+  C.redes.forEach(r => {
+    const a = el('a', 'btn'); a.href = r.url; a.target = '_blank'; a.rel = 'noopener';
+    a.innerHTML = iconoRed(r); a.appendChild(document.createTextNode(r.nombre));
+    $('redes').appendChild(a);
+  });
+}
+
+/* Transferencia */
+const datos = Object.entries(C.transferencia).filter(([, v]) => v);
+if (datos.length){
+  $('pago-sec').hidden = false;
+  datos.forEach(([k, v]) => {
+    const row = el('div', 'row'), info = el('div');
+    info.appendChild(el('small', null, k)); info.appendChild(el('span', null, v));
+    const b = el('button', 'copy', 'Copiar'); b.type = 'button';
+    b.setAttribute('aria-label', 'Copiar ' + k);
+    b.onclick = () => copiar(v, b);
+    row.appendChild(info); row.appendChild(b); $('pago').appendChild(row);
+  });
+  $('copyall').onclick = e => copiar(datos.map(([k, v]) => k + ': ' + v).join('\n'), e.currentTarget);
+}
+
+$('footer').textContent = (cat ? 'Catálogo digital' : 'Menú digital') + ' · ' + C.nombre;
+}
+
+/* Burbujas físicas: aparecen al desplazarse y se apilan de abajo hacia arriba.
+   No se usan librerías: canvas 2D, gravedad, límites, choques entre círculos,
+   rebotes amortiguados y fricción. Renderizado cacheado para móviles. */
+(function iniciarBurbujas(){
+  const lienzo = $('burbujas-lienzo');
+  const ctx = lienzo && lienzo.getContext('2d', {alpha:true});
+  if (!ctx || !window.requestAnimationFrame) return;
+  const reducir = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reducir.matches) return;
+
+  const burbujas = [];
+  const sprites = new Map();
+  const G = 550;                   // Gravedad (px/s²)
+  const REBOTE = .26;               // Elasticidad de las paredes y choques
+  const TAMANO_CELDA = 80;          // Recalculado según radio en redimensiones
+  let ancho=1, alto=1, escala=1, radioBase=21, celda=TAMANO_CELDA;
+  let maxBurbujas=180, deuda=0, anteriorScroll=window.scrollY||0;
+  let instanteEntrada=0, ultimoFrame=0, acumulador=0;
+  let raf=0, ultimoSpawn=0;
+  let toqueAnterior=null, direccion=1;
+  // En móvil el viewport visual cambia al esconderse la barra de direcciones.
+  // Unificamos dimensiones CSS y canvas usando la misma medición, y conservamos
+  // la distancia de cada burbuja al suelo durante esos cambios.
+  const viewportVisual = window.visualViewport || null;
+  let pendienteViewport=0, desplazX=null, desplazY=null;
+
+  function limites(b){
+    if (b.x < b.r){b.x=b.r;if(b.vx<0)b.vx=-b.vx*REBOTE;}
+    if (b.x > ancho-b.r){b.x=ancho-b.r;if(b.vx>0)b.vx=-b.vx*REBOTE;}
+    if (b.y > alto-b.r){
+      b.y=alto-b.r;
+      if (b.vy>32) b.vy=-b.vy*REBOTE;
+      else b.vy=0;
+      b.vx*=.92;
+      if(Math.abs(b.vx)<4)b.vx=0;
+    }
+    if (b.y < b.r && b.vy < 0){b.y=b.r;b.vy=-b.vy*REBOTE;}
+  }
+
+  /* Sprite pre-renderizado: halo, cuerpo transparente, borde refractado y destellos. */
+  function sprite(r, variante){
+    const id=r+'-'+variante;
+    if(sprites.has(id))return sprites.get(id);
+    const pad=Math.max(6,Math.ceil(r*.22)), lado=2*(r+pad);
+    const p=document.createElement('canvas');p.width=Math.round(lado*1.6);p.height=p.width;
+    const c=p.getContext('2d');c.scale(p.width/lado,p.width/lado);
+    const m=lado/2, r2=r+.1;
+
+    const resplandor=c.createRadialGradient(m,m,r*.76,m,m,r+pad*.86);
+    resplandor.addColorStop(0,'rgba(185,245,255,0)');
+    resplandor.addColorStop(.74,'rgba(150,226,255,.03)');
+    resplandor.addColorStop(1,'rgba(180,236,255,0)');
+    c.fillStyle=resplandor;c.beginPath();c.arc(m,m,r+pad,0,Math.PI*2);c.fill();
+
+    c.beginPath();c.arc(m,m,r2,0,Math.PI*2);
+    const cristal=c.createRadialGradient(m-r*.48,m-r*.57,r*.04,m+r*.16,m+r*.22,r*1.5);
+    cristal.addColorStop(0,'rgba(255,255,255,.24)');
+    cristal.addColorStop(.35,'rgba(232,251,255,.07)');
+    cristal.addColorStop(.70,'rgba(177,235,246,.025)');
+    cristal.addColorStop(1,'rgba(99,193,236,.17)');
+    c.fillStyle=cristal;c.fill();
+
+    // Contorno: una arista oscura fina separa el cristal incluso sobre fondos claros.
+    c.strokeStyle='rgba(17,85,119,.26)';c.lineWidth=1.75;
+    c.beginPath();c.arc(m,m,r-.25,0,Math.PI*2);c.stroke();
+    c.strokeStyle='rgba(239,255,255,.80)';c.lineWidth=1.25;
+    c.beginPath();c.arc(m,m,r-1.1,0,Math.PI*2);c.stroke();
+
+    // Reflejo blanco superior izquierdo y un pequeño prisma inferior.
+    c.beginPath();
+    c.arc(m,m,r-2.5,Math.PI*1.08,Math.PI*1.58);
+    c.strokeStyle='rgba(255,255,255,.96)';c.lineCap='round';c.lineWidth=Math.max(1.6,r*.087);c.stroke();
+    c.beginPath();c.arc(m,m,r-2.25,.06*Math.PI,.47*Math.PI);
+    c.strokeStyle=variante===1?'rgba(160,194,255,.55)':'rgba(145,242,250,.48)';
+    c.lineWidth=Math.max(1.5,r*.085);c.stroke();
+    c.beginPath();c.ellipse(m-r*.43,m-r*.56,Math.max(2,r*.17),Math.max(1.2,r*.069),-.66,0,Math.PI*2);
+    c.fillStyle='rgba(255,255,255,.56)';c.fill();
+    const result={image:p, lado};sprites.set(id,result);return result;
+  }
+
+  function dibujar(){
+    ctx.clearRect(0,0,ancho,alto);
+    for(const b of burbujas){
+      const s=sprite(b.r,b.variante);
+      ctx.drawImage(s.image,b.x-s.lado/2,b.y-s.lado/2,s.lado,s.lado);
+    }
+  }
+
+  function medidas(){
+    // visualViewport.height mide lo que el usuario realmente ve, incluso cuando
+    // aparece o desaparece la barra inferior de Chrome / Safari.
+    const vw=viewportVisual ? viewportVisual.width : document.documentElement.clientWidth;
+    const vh=viewportVisual ? viewportVisual.height : window.innerHeight;
+    const nuevoAncho=Math.max(1,Math.round(vw));
+    const nuevoAlto=Math.max(1,Math.round(vh));
+    const dx=viewportVisual ? viewportVisual.offsetLeft : 0;
+    const dy=viewportVisual ? viewportVisual.offsetTop : 0;
+
+    // Durante algunos gestos solo se mueve el viewport visual (no su tamaño).
+    // Ajustar su origen evita que el lienzo aparente "regresar" al hacer scroll.
+    if(desplazX===null || desplazY===null || Math.abs(dx-desplazX)>.25 || Math.abs(dy-desplazY)>.25){
+      lienzo.style.transform='translate3d('+dx+'px,'+dy+'px,0)';
+      desplazX=dx;desplazY=dy;
+    }
+
+    // Ignorar redimensiones minúsculas que causan recálculos continuos en móviles.
+    if(Math.abs(nuevoAncho-ancho)<2 && Math.abs(nuevoAlto-alto)<2)return;
+    const viejoAncho=ancho,viejoAlto=alto;
+    ancho=nuevoAncho;alto=nuevoAlto;
+    lienzo.style.width=ancho+'px';
+    lienzo.style.height=alto+'px';
+    escala=Math.min(window.devicePixelRatio||1,ancho>900?1.25:1.75);
+    lienzo.width=Math.round(ancho*escala);
+    lienzo.height=Math.round(alto*escala);
+    ctx.setTransform(escala,0,0,escala,0,0);
+    radioBase=ancho<600?Math.max(17,Math.min(22,ancho*.053)):Math.max(25,Math.min(52,ancho*.028));
+    celda=Math.ceil(radioBase*2.8);
+    maxBurbujas=Math.min(580,Math.ceil((ancho*alto)/(Math.PI*radioBase*radioBase)*.85));
+    if(viejoAncho>1&&viejoAlto>1){
+      const diferenciaSuelo=alto-viejoAlto;
+      for(const b of burbujas){
+        // En un cambio de barra del navegador, se mueve el suelo, no el mundo:
+        // no escalar proporcionalmente la altura (provocaba el salto de la pila).
+        if(Math.abs(ancho-viejoAncho)>1){
+          b.x=Math.max(b.r,Math.min(ancho-b.r,b.x/viejoAncho*ancho));
+        }
+        b.y=Math.max(b.r,Math.min(alto-b.r,b.y+diferenciaSuelo));
+        limites(b);
+      }
+    }
+    dibujar();
+    if(burbujas.length)activar();
+  }
+
+  function programarMedidas(){
+    if(!pendienteViewport){
+      pendienteViewport=requestAnimationFrame(()=>{
+        pendienteViewport=0;
+        medidas();
+      });
+    }
+  }
+
+  function crear(){
+    if(burbujas.length>=maxBurbujas)return;
+    const factor=.72+Math.random()*.58;
+    const r=Math.round(radioBase*factor);
+    const x=r+Math.random()*Math.max(1,ancho-2*r);
+    burbujas.push({x,y:-r-4,vx:(Math.random()-.5)*140+direccion*28,
+      vy:35+Math.random()*70,r,invMasa:1/(r*r),variante:Math.random()<.5?0:1});
+    ultimoSpawn=performance.now();
+    activar();
+  }
+
+  function mover(dt){
+    const freno=Math.pow(.993,dt*60);
+    for(const b of burbujas){
+      b.vy=Math.min(1450,b.vy+G*dt);
+      b.vx*=freno;
+      b.x+=b.vx*dt;b.y+=b.vy*dt;
+      limites(b);
+    }
+    // Cuadrícula espacial: sólo se comparan burbujas cercanas.
+    for(let iter=0;iter<16;iter++){
+      const grid=new Map();
+      for(let i=0;i<burbujas.length;i++){
+        const b=burbujas[i];
+        const cx=Math.floor(b.x/celda), cy=Math.floor(b.y/celda);
+        const k=cx+','+cy;
+        if(!grid.has(k))grid.set(k,[]);
+        grid.get(k).push(i);
+      }
+      for(let i=0;i<burbujas.length;i++){
+        const a=burbujas[i],cx=Math.floor(a.x/celda),cy=Math.floor(a.y/celda);
+        for(let gx=cx-1;gx<=cx+1;gx++)for(let gy=cy-1;gy<=cy+1;gy++){
+          const indices=grid.get(gx+','+gy);if(!indices)continue;
+          for(const j of indices){
+            if(j<=i)continue;
+            const b=burbujas[j],dx=b.x-a.x,dy=b.y-a.y,rad=a.r+b.r;
+            const dist2=dx*dx+dy*dy;
+            if(dist2>=rad*rad)continue;
+            let distancia=Math.sqrt(dist2);
+            const nx=distancia>0.00001?dx/distancia:1;
+            const ny=distancia>0.00001?dy/distancia:0;
+            if(!distancia)distancia=.00001;
+            const solape=rad-distancia;
+            const masa=a.invMasa+b.invMasa;
+            const correccion=Math.max(0,solape-.07)*.92/masa;
+            a.x-=nx*correccion*a.invMasa;a.y-=ny*correccion*a.invMasa;
+            b.x+=nx*correccion*b.invMasa;b.y+=ny*correccion*b.invMasa;
+            // Choque con impulso normal y fricción tangencial.
+            const vx=b.vx-a.vx,vy=b.vy-a.vy;
+            const normal=vx*nx+vy*ny;
+            if(normal<0){
+              const rest=normal< -65?REBOTE:.02;
+              const impulso=-(1+rest)*normal/masa;
+              a.vx-=nx*impulso*a.invMasa;a.vy-=ny*impulso*a.invMasa;
+              b.vx+=nx*impulso*b.invMasa;b.vy+=ny*impulso*b.invMasa;
+              const tx=-ny,ty=nx;
+              const tangente=(b.vx-a.vx)*tx+(b.vy-a.vy)*ty;
+              const rozamiento=Math.max(-impulso*.10,Math.min(impulso*.10,-tangente/masa));
+              a.vx-=tx*rozamiento*a.invMasa;a.vy-=ty*rozamiento*a.invMasa;
+              b.vx+=tx*rozamiento*b.invMasa;b.vy+=ty*rozamiento*b.invMasa;
+            }
+          }
+        }
+        limites(a);
+      }
+    }
+  }
+
+  function animar(t){
+    raf=0;
+    if(document.hidden){ultimoFrame=0;return;}
+    if(!ultimoFrame)ultimoFrame=t;
+    acumulador+=Math.min(.05,(t-ultimoFrame)/1000);ultimoFrame=t;
+    let pasos=0;
+    while(acumulador>=1/60&&pasos<3){mover(1/60);acumulador-=1/60;pasos++;}
+    if(pasos===3)acumulador=0;
+    dibujar();
+    // Tras el reposo, detenemos el motor sin borrar la pila: ahorra batería.
+    if(t-ultimoSpawn>8500){ultimoFrame=0;acumulador=0;return;}
+    raf=requestAnimationFrame(animar);
+  }
+  function activar(){
+    if(!raf&&!document.hidden){ultimoFrame=0;raf=requestAnimationFrame(animar);}
+  }
+
+  // Usamos gestos reales además del evento scroll: así también nacen burbujas
+  // cuando el usuario sigue deslizando en el final de un menú muy corto.
+  function registrarMovimiento(delta){
+    if(!delta||reducir.matches||document.body.style.overflow==='hidden')return;
+    direccion=delta>0?1:-1;
+    const impulso=Math.min(280,Math.abs(delta));
+    deuda+=impulso;
+    let cantidad=0;
+    while(deuda>=35&&cantidad<9&&burbujas.length<maxBurbujas){
+      crear();deuda-=35;cantidad++;
+    }
+    // No acumular deuda de movimiento si la pantalla ya está llena.
+    if(burbujas.length>=maxBurbujas)deuda=0;
+  }
+  window.addEventListener('wheel',e=>{
+    if(e.ctrlKey)return;
+    instanteEntrada=performance.now();
+    const delta=e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?alto:1);
+    registrarMovimiento(delta);
+  },{passive:true});
+  window.addEventListener('touchstart',e=>{
+    toqueAnterior=e.touches.length===1?e.touches[0].clientY:null;
+  },{passive:true});
+  window.addEventListener('touchmove',e=>{
+    if(e.touches.length!==1||toqueAnterior===null)return;
+    const actual=e.touches[0].clientY;
+    instanteEntrada=performance.now();
+    registrarMovimiento(toqueAnterior-actual);
+    toqueAnterior=actual;
+  },{passive:true});
+  window.addEventListener('touchend',()=>toqueAnterior=null,{passive:true});
+  window.addEventListener('touchcancel',()=>toqueAnterior=null,{passive:true});
+  window.addEventListener('scroll',()=>{
+    const nuevo=window.scrollY||0,delta=nuevo-anteriorScroll;
+    anteriorScroll=nuevo;
+    if(performance.now()-instanteEntrada>170)registrarMovimiento(delta);
+  },{passive:true});
+  window.addEventListener('resize',programarMedidas,{passive:true});
+  window.addEventListener('orientationchange',programarMedidas,{passive:true});
+  // iOS Safari y Chrome Android no siempre emiten resize de window por las
+  // barras flotantes; estos eventos sí reflejan el área visible real.
+  if(viewportVisual){
+    viewportVisual.addEventListener('resize',programarMedidas,{passive:true});
+    viewportVisual.addEventListener('scroll',programarMedidas,{passive:true});
+  }
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&burbujas.length)activar();});
+  if(reducir.addEventListener)reducir.addEventListener('change',()=>{
+    if(reducir.matches){if(raf)cancelAnimationFrame(raf);raf=0;ctx.clearRect(0,0,ancho,alto);}
+    else {dibujar();activar();}
+  });
+  medidas();
+})();
+
+/* Carga los datos del negocio:
+   menu.html?d=...   -> los datos vienen dentro del link (no hay que subir nada)
+   menu.html?n=slug  -> los datos se leen de datos/slug.json */
+const P = new URLSearchParams(location.search);
+const slug = P.get('n') || '', cod = P.get('d');
+function noEncontrada(detalle){
+  $('logo').hidden = true;
+  $('nombre').textContent = 'Página no encontrada';
+  $('desc').textContent = 'Revisa el link o vuelve a escanear el código QR.' + (detalle ? ' (' + detalle + ')' : '');
+}
+function decodificar(t){
+  t = t.replace(/-/g, '+').replace(/_/g, '/'); while (t.length % 4) t += '=';
+  return JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(t), c => c.charCodeAt(0))));
+}
+if (cod){
+  try { render(decodificar(cod)); } catch(e){ noEncontrada('el link está incompleto o dañado'); }
+} else if (/^[a-z0-9-]+$/i.test(slug)){
+  fetch('datos/' + slug + '.json', { cache: 'no-store' })
+    .then(r => { if (!r.ok) throw new Error('no se encontró datos/' + slug + '.json'); return r.json(); })
+    .then(render).catch(e => noEncontrada(e.message));
+} else noEncontrada('el link no incluye los datos del negocio');
+</script>
+</body>
+</html>
