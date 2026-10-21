@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Menú digital personalizado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4efe8;
+  --bg-2:#efe3d3;
+  --surface:rgba(255,255,255,.88);
+  --surface-strong:rgba(255,255,255,.95);
+  --ink:#24160f;
+  --muted:#7a6559;
+  --line:rgba(71,42,23,.12);
+  --accent:#7a4b2e;
+  --accent-2:#b47349;
+  --on-accent:#fffaf6;
+  --shadow:0 18px 44px rgba(52,31,20,.14);
+  color-scheme:light;
+}
+:root[data-estilo="oscuro"]{
+  --bg:#171211;
+  --bg-2:#251917;
+  --surface:rgba(31,24,23,.86);
+  --surface-strong:rgba(34,26,24,.95);
+  --ink:#f7f1ed;
+  --muted:#d2beb0;
+  --line:rgba(250,235,225,.12);
+  --shadow:0 18px 48px rgba(0,0,0,.38);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{min-height:100%}
+body{
+  margin:0;min-height:100vh;position:relative;isolation:isolate;
+  font-family:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
+  background:linear-gradient(180deg,var(--bg),var(--bg-2));
+  color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.45;
+}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+[hidden]{display:none!important}
+.wallpaper{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.wallpaper::before,.wallpaper::after{content:"";position:absolute;border-radius:50%;filter:blur(12px);opacity:.55}
+.wallpaper::before{width:290px;height:290px;left:-90px;top:-45px;background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.95),rgba(255,255,255,0) 70%)}
+.wallpaper::after{width:310px;height:310px;right:-110px;top:130px;background:radial-gradient(circle at 50% 50%,rgba(183,132,92,.20),rgba(183,132,92,0) 68%)}
+.wallpaper-art{position:absolute;inset:0;background-image:
+radial-gradient(circle at 15% 10%, rgba(255,255,255,.34), transparent 25%),
+radial-gradient(circle at 85% 15%, rgba(194,142,97,.18), transparent 24%),
+radial-gradient(circle at 78% 85%, rgba(122,75,46,.10), transparent 22%);
+background-repeat:no-repeat}
+:root[data-estilo="oscuro"] .wallpaper-art{background-image:
+radial-gradient(circle at 15% 10%, rgba(255,255,255,.08), transparent 25%),
+radial-gradient(circle at 85% 15%, rgba(194,142,97,.12), transparent 24%),
+radial-gradient(circle at 78% 85%, rgba(122,75,46,.12), transparent 22%)}
+.cafe-lienzo{position:fixed;top:0;left:0;z-index:0;display:block;width:100vw;height:100vh;pointer-events:none;transform:translate3d(0,0,0);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+@media(prefers-reduced-motion:reduce){.cafe-lienzo{display:none!important}}
+.wash{position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,rgba(255,251,248,.18),rgba(255,247,239,.34) 58%,rgba(247,238,231,.58) 100%)}
+:root[data-estilo="oscuro"] .wash{background:linear-gradient(180deg,rgba(8,5,5,.22),rgba(9,7,6,.48))}
+.wrap{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:24px 18px calc(110px + env(safe-area-inset-bottom));}
+.hero,.sheet,.thumb-zone,.section-card{background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.hero{position:relative;overflow:hidden;border-radius:30px 30px 34px 26px;padding:18px 18px 20px}
+.hero::before{content:"";position:absolute;inset:auto 18px 0;height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent)}
+.hero-head{display:flex;align-items:center;gap:14px}
+.logo{width:82px;height:82px;flex:none;border-radius:28px 28px 22px 28px;background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 76%, #f0c299));color:var(--on-accent);display:grid;place-items:center;overflow:hidden;font-size:32px;font-weight:800;box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 10px 22px rgba(0,0,0,.12)}
+.logo img{width:100%;height:100%;object-fit:cover}
+.hero-copy{min-width:0;flex:1}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
+.badge{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;background:rgba(122,75,46,.10);border:1px solid rgba(122,75,46,.13);font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--accent);text-transform:uppercase}
+.badge::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 0 3px rgba(122,75,46,.11)}
+h1{margin:0;font-size:clamp(28px,8vw,38px);line-height:1.02;letter-spacing:-.05em;overflow-wrap:anywhere}
+.desc{margin:10px 0 0;font-size:14px;color:var(--muted);white-space:pre-line;line-height:1.62}
+.oferta-link{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding:15px 16px 15px 18px;border-radius:24px 24px 18px 26px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--on-accent);border:1px solid rgba(255,255,255,.22);box-shadow:0 14px 30px rgba(73,39,21,.18), inset 0 1px 0 rgba(255,255,255,.3);min-height:78px}
+.oferta-link::after{content:"›";display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);font-size:28px;font-weight:700;line-height:1}
+.oferta-copy{min-width:0}
+.oferta-kicker{display:block;font-size:11px;font-weight:800;letter-spacing:.16em;opacity:.8;margin-bottom:4px}
+.oferta-titulo{display:block;font-size:17px;font-weight:800;line-height:1.18;overflow-wrap:anywhere}
+.thumb-zone{margin-top:16px;padding:14px;border-radius:30px 22px 34px 22px;background:linear-gradient(180deg,var(--surface-strong),var(--surface));}
+.thumb-zone-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 4px 14px}
+.thumb-zone-head h2{margin:0;font-size:15px;font-weight:800;letter-spacing:-.02em}
+.thumb-zone-note{font-size:11px;color:var(--muted);font-weight:700}
+.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.action-btn{position:relative;display:flex;align-items:center;gap:12px;min-width:0;min-height:76px;padding:14px 16px;border-radius:28px 22px 30px 20px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.88),rgba(255,255,255,.72));box-shadow:0 10px 22px rgba(0,0,0,.06);transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease}
+:root[data-estilo="oscuro"] .action-btn{background:linear-gradient(180deg,rgba(54,43,39,.82),rgba(35,28,26,.88))}
+.action-btn:hover{transform:translateY(-2px);box-shadow:0 15px 28px rgba(0,0,0,.10);border-color:color-mix(in srgb,var(--accent) 40%, var(--line))}
+.action-btn:active{transform:scale(.985)}
+.action-btn.main{grid-column:1 / -1;min-height:92px;padding:18px 18px 18px 20px;border-radius:34px 24px 38px 24px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--on-accent);border-color:transparent;box-shadow:0 16px 30px rgba(108,63,36,.26), inset 0 1px 0 rgba(255,255,255,.26)}
+.action-btn.big-alone{grid-column:1 / -1}
+.action-orb{width:48px;height:48px;flex:none;border-radius:21px 19px 23px 18px;display:grid;place-items:center;background:rgba(122,75,46,.10);border:1px solid rgba(122,75,46,.12)}
+.action-btn.main .action-orb{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.22)}
+.action-orb svg{width:22px;height:22px;display:block}
+.action-copy{min-width:0;flex:1}
+.action-title{display:block;font-size:16px;font-weight:800;letter-spacing:-.03em;overflow-wrap:anywhere}
+.action-sub{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-top:4px}
+.action-btn.main .action-sub{color:rgba(255,255,255,.82)}
+.action-arrow{width:34px;height:34px;flex:none;border-radius:50%;display:grid;place-items:center;background:rgba(122,75,46,.10);border:1px solid rgba(122,75,46,.12);font-size:23px;font-weight:700;line-height:1}
+.action-btn.main .action-arrow{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.22)}
+.sheet{margin-top:16px;padding:18px;border-radius:28px 22px 30px 22px}
+.sheet h3{margin:0 0 4px;font-size:18px;font-weight:800;letter-spacing:-.03em}
+.sheet .lead{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
+.social-grid{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.social-btn{display:flex;align-items:center;gap:13px;min-width:0;padding:13px 15px;border-radius:26px 22px 28px 18px;border:1px solid var(--line);background:rgba(255,255,255,.62);box-shadow:0 8px 18px rgba(0,0,0,.04);font-weight:800}
+:root[data-estilo="oscuro"] .social-btn{background:rgba(43,34,32,.72)}
+.social-symbol{width:40px;height:40px;min-width:40px;display:grid;place-items:center;border-radius:15px 14px 16px 12px;background:#ece8e5;overflow:hidden}
+.social-symbol svg{width:24px;height:24px;display:block}
+.social-symbol.instagram{background:linear-gradient(140deg,#fae3a2,#ffe2ed 45%,#eadcfc)}
+.social-symbol.whatsapp{background:#e4f8e9}
+.social-symbol.facebook{background:#e5f0ff}
+.social-symbol.tiktok{background:#e8ebf0}
+.social-symbol.youtube{background:#ffeded}
+.social-symbol.x{background:#e7e8eb}
+.social-symbol.web{background:#e4f4f1}
+.social-name{min-width:0;overflow-wrap:anywhere}
+.payment-wrap{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.pay-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 14px 14px 16px;border:1px solid var(--line);border-radius:24px 18px 26px 16px;background:rgba(255,255,255,.66)}
+:root[data-estilo="oscuro"] .pay-row{background:rgba(43,34,32,.70)}
+.pay-info{min-width:0}
+.pay-info small{display:block;font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.pay-info span{display:block;font-size:14px;font-weight:800;overflow-wrap:anywhere}
+.copy{flex:none;border:0;min-height:42px;padding:0 16px;border-radius:999px;background:rgba(122,75,46,.12);color:var(--accent);font-size:12px;font-weight:800;transition:transform .15s ease, background .15s ease}
+.copy:hover{background:rgba(122,75,46,.18)}
+.copy.ok{background:var(--accent);color:var(--on-accent)}
+.copyall{width:100%;margin-top:14px;min-height:54px;border:0;border-radius:999px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--on-accent);font-weight:800;box-shadow:0 14px 28px rgba(108,63,36,.21)}
+.empty{margin-top:10px;color:var(--muted);font-size:13px}
+.footer{margin:18px 0 0;padding:0 6px;text-align:center;color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.02em}
+.thumb-nav{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));z-index:9;transform:translateX(-50%);width:min(94vw,540px);padding:10px;background:rgba(255,255,255,.74);border:1px solid rgba(72,42,24,.10);border-radius:999px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 16px 34px rgba(38,24,18,.18)}
+:root[data-estilo="oscuro"] .thumb-nav{background:rgba(25,20,19,.82);border-color:rgba(255,255,255,.08)}
+.thumb-nav-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.dock-btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 12px;border:0;border-radius:999px;background:rgba(122,75,46,.10);font-size:12px;font-weight:800;color:var(--ink)}
+.dock-btn svg{width:18px;height:18px;flex:none}
+.dock-btn.active,.dock-btn:hover{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--on-accent)}
+.visor{position:fixed;inset:0;z-index:50;background:rgba(8,14,12,.95);display:flex;flex-direction:column}
+.visor-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;padding-top:max(12px,env(safe-area-inset-top));color:#fff;font-weight:800;font-size:14px}
+.visor-bar button{padding:9px 15px;border-radius:12px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:#fff;font-weight:800;font-size:13px}
+.visor-body{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:0 12px max(24px,env(safe-area-inset-bottom))}
+.visor-body img{display:block;width:100%;max-width:900px;margin:0 auto 12px;border-radius:10px;background:#fff}
+@media(max-width:380px){
+  .wrap{padding-left:13px;padding-right:13px}
+  .hero{padding:16px 15px 18px}
+  .logo{width:72px;height:72px}
+  .actions{gap:10px}
+  .action-btn{min-height:72px;padding:13px 14px}
+  .action-btn.main{min-height:86px}
+  .thumb-nav-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .thumb-nav{border-radius:30px;padding:10px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wallpaper" aria-hidden="true"><div class="wallpaper-art" id="fondo"></div></div>
+<div class="wash" aria-hidden="true"></div>
+<canvas class="cafe-lienzo" id="cafe-lienzo" aria-hidden="true"></canvas>
+<main class="wrap">
+  <section class="hero" id="top">
+    <div class="hero-head">
+      <div class="logo" id="logo"></div>
+      <div class="hero-copy">
+        <div class="badge-row">
+          <span class="badge" id="tipo-badge">Menú digital</span>
+        </div>
+        <h1 id="nombre"></h1>
+      </div>
+    </div>
+    <p class="desc" id="desc"></p>
+    <a class="oferta-link" id="oferta-link" href="#" target="_blank" rel="noopener noreferrer" hidden>
+      <span class="oferta-copy">
+        <span class="oferta-kicker">DESTACADO</span>
+        <span class="oferta-titulo" id="oferta-titulo">OFERTAS DEL DÍA</span>
+      </span>
+    </a>
+  </section>
+
+  <section class="thumb-zone" id="acciones-panel">
+    <div class="thumb-zone-head">
+      <h2>Accesos rápidos</h2>
+      <span class="thumb-zone-note">Diseñado para una mano</span>
+    </div>
+    <div class="actions" id="actions"></div>
+    <p class="empty" id="actions-empty" hidden>No hay accesos disponibles en este menú.</p>
+  </section>
+
+  <section class="sheet" id="redes-sec" hidden>
+    <h3>Síguenos</h3>
+    <p class="lead">Toca una red para abrirla rápidamente.</p>
+    <div class="social-grid" id="redes"></div>
+  </section>
+
+  <section class="sheet" id="pago-sec" hidden>
+    <h3>Datos de transferencia</h3>
+    <p class="lead">Copias cada dato con un solo toque.</p>
+    <div class="payment-wrap" id="pago"></div>
+    <button class="copyall" id="copyall">Copiar todos los datos</button>
+  </section>
+
+  <div class="footer" id="footer"></div>
+</main>
+
+<nav class="thumb-nav" id="thumb-nav" aria-label="Acceso rápido">
+  <div class="thumb-nav-list" id="thumb-nav-list">
+    <button class="dock-btn active" type="button" data-target="top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10.5V20h14v-9.5"/></svg><span>Inicio</span></button>
+    <button class="dock-btn" type="button" data-target="acciones-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="4"/><path d="M8 12h8M8 9h4M8 15h6"/></svg><span>Acciones</span></button>
+    <button class="dock-btn" type="button" data-target="redes-sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10a5 5 0 1 1 10 0c0 5-5 9-5 9s-5-4-5-9Z"/><circle cx="12" cy="10" r="1.5"/></svg><span>Redes</span></button>
+    <button class="dock-btn" type="button" data-target="pago-sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="3"/><path d="M2.5 10.5h19"/></svg><span>Pago</span></button>
+  </div>
+</nav>
+
+<script>
+const $ = id => document.getElementById(id);
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const ICON = {
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v17H6a2 2 0 0 0-2 2z"/><path d="M4 20V5"/></svg>',
+  pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>'
+};
+const SECTION_ICON = {
+  top:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10.5V20h14v-9.5"/></svg>',
+  acciones:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="4"/><path d="M8 12h8M8 9h4M8 15h6"/></svg>',
+  redes:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10a5 5 0 1 1 10 0c0 5-5 9-5 9s-5-4-5-9Z"/><circle cx="12" cy="10" r="1.5"/></svg>',
+  pago:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="3"/><path d="M2.5 10.5h19"/></svg>'
+};
+/* Iconos con colores de marca, sin bibliotecas externas. */
+const SOCIAL = {
+  instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="#C13584" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.2"/><circle cx="12" cy="12" r="4.05"/><circle cx="17.5" cy="6.6" r="1.2" fill="#F56040" stroke="none"/></svg>',
+  whatsapp: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#25D366" d="M12.02 2a9.98 9.98 0 0 0-8.6 15.08L2 22l5.08-1.34A10 10 0 1 0 12.02 2Z"/><path fill="#fff" d="M17.8 14.67c-.22-.12-1.36-.68-1.57-.76-.22-.07-.37-.11-.53.12-.15.22-.6.76-.73.91-.14.15-.27.17-.49.06a7.5 7.5 0 0 1-2.2-1.35 8.2 8.2 0 0 1-1.52-1.88c-.16-.27 0-.4.11-.53.1-.1.22-.27.33-.4.12-.13.15-.23.23-.38.07-.15.04-.28-.02-.4-.05-.1-.53-1.26-.73-1.72-.2-.46-.39-.4-.54-.41h-.45c-.15 0-.4.06-.61.28-.21.22-.8.78-.8 1.9s.82 2.2.94 2.35c.11.15 1.61 2.45 3.9 3.44.54.24.97.38 1.3.49.54.17 1.03.15 1.42.09.43-.06 1.36-.55 1.55-1.08.19-.54.19-1 .14-1.08-.06-.1-.2-.15-.42-.27Z"/></svg>',
+  facebook: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" fill="#1877F2"/><path d="M14.1 21V13.3h2.5l.35-3.05H14.1V8.3c0-.89.24-1.5 1.53-1.5h1.47V4.1a20 20 0 0 0-2.12-.1c-2.1 0-3.54 1.28-3.54 3.63v2.62H9v3.05h2.44V21Z" fill="#fff"/></svg>',
+  tiktok: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#25F4EE" d="M14 2h2.6c.2 2.1 1.45 3.5 3.5 3.6v2.8c-1.4 0-2.6-.4-3.65-1.1v6.6a5.55 5.55 0 1 1-5.6-5.53c.45 0 .83.04 1.18.13v2.9a2.7 2.7 0 1 0 1.97 2.6V2Z"/><path fill="#FE2C55" d="M15 2h2.4c.25 2.05 1.36 3.4 3.3 3.57v2.64c-1.36-.03-2.65-.42-3.7-1.11v6.78a5.5 5.5 0 0 1-9.4 3.84 5.5 5.5 0 0 1 3.42-9.3v2.87a2.7 2.7 0 1 0 3.98 2.38V2Z" opacity=".78"/><path fill="#20252b" d="M14.5 2h2.15c.2 2.03 1.45 3.33 3.32 3.52v2.05A7 7 0 0 1 16.6 6.3v7.3a5.3 5.3 0 1 1-5.3-5.23v2.55a2.75 2.75 0 1 0 3.2 2.72V2Z"/></svg>',
+  youtube: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4.3" fill="#FF0033"/><path d="m10 8.2 6 3.8-6 3.8Z" fill="#fff"/></svg>',
+  x: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" fill="#16191d"/><path d="M6.5 6.3h2.8l8.4 11.4h-2.8Zm10.6 0h1.5L7.2 17.7H5.7Z" fill="#fff"/></svg>',
+  web: '<svg viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>'
+};
+function tipoRed(r){
+  const k = (String(r.nombre || '') + ' ' + String(r.url || '')).toLowerCase();
+  if (/instagram/.test(k)) return 'instagram';
+  if (/whatsapp|wa\.me/.test(k)) return 'whatsapp';
+  if (/facebook|fb\.com/.test(k)) return 'facebook';
+  if (/tiktok/.test(k)) return 'tiktok';
+  if (/youtube|youtu\.be/.test(k)) return 'youtube';
+  if (/twitter|x\.com/.test(k)) return 'x';
+  return 'web';
+}
+function iconoRed(r){
+  const red = tipoRed(r);
+  return '<span class="social-symbol ' + red + '">' + SOCIAL[red] + '</span>';
+}
+function toast(btn){
+  const old = btn.textContent;
+  btn.textContent = '¡Copiado!'; btn.classList.add('ok');
+  setTimeout(() => { btn.textContent = old; btn.classList.remove('ok'); }, 1400);
+}
+async function copiar(texto, btn){
+  try { await navigator.clipboard.writeText(texto); }
+  catch(e){
+    const t = document.createElement('textarea'); t.value = texto; t.style.position='fixed'; t.style.opacity='0';
+    document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove();
+  }
+  toast(btn);
+}
+function abrirVisor(imgs, origen, nombre){
+  const v = el('div', 'visor');
+  v.setAttribute('role', 'dialog'); v.setAttribute('aria-modal', 'true'); v.setAttribute('aria-label', nombre);
+  const barra = el('div', 'visor-bar'); barra.appendChild(el('span', null, nombre));
+  const x = el('button', null, 'Cerrar ✕'); x.type = 'button';
+  const cuerpo = el('div', 'visor-body');
+  imgs.forEach((src, i) => {
+    const im = el('img'); im.src = src; im.alt = nombre + ', página ' + (i + 1) + ' de ' + imgs.length; cuerpo.appendChild(im);
+  });
+  const tecla = e => { if (e.key === 'Escape') cerrar(); };
+  const cerrar = () => { v.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', tecla); if (origen) origen.focus(); };
+  x.onclick = cerrar; document.addEventListener('keydown', tecla);
+  barra.appendChild(x); v.appendChild(barra); v.appendChild(cuerpo);
+  document.body.appendChild(v); document.body.style.overflow = 'hidden'; x.focus();
+}
+function irA(id){
+  const target = $(id);
+  if (!target || target.hidden) return;
+  target.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function configurarDock(){
+  document.querySelectorAll('.dock-btn').forEach(btn=>{
+    const id = btn.dataset.target;
+    const sec = $(id);
+    if (!sec || sec.hidden) btn.hidden = true;
+    btn.onclick = () => {
+      irA(id);
+      document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+    };
+  });
+}
+function crearAccion({texto, subtitulo, url, icono, main, onClick}){
+  const tag = onClick ? 'button' : 'a';
+  const a = el(tag, 'action-btn' + (main ? ' main' : ''));
+  if (onClick){ a.type = 'button'; a.onclick = onClick; }
+  else { a.href = url; a.target = '_blank'; a.rel = 'noopener'; }
+  a.innerHTML = '<span class="action-orb">' + icono + '</span>' +
+    '<span class="action-copy"><span class="action-title">' + texto + '</span><span class="action-sub">' + subtitulo + '</span></span>' +
+    '<span class="action-arrow" aria-hidden="true">›</span>';
+  $('actions').appendChild(a);
+}
+function render(C){
+const seg = u => /^https?:\/\//i.test(u || '') ? u : '';
+const segImg = u => (/^https?:\/\//i.test(u || '') || /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+\/=]+$/.test(u || '')) ? u : '';
+C.cartaUrl = seg(C.cartaUrl); C.mapsUrl = seg(C.mapsUrl); C.resenaUrl = seg(C.resenaUrl); C.logo = segImg(C.logo); C.fondo = segImg(C.fondo);
+C.ofertaUrl = seg(C.ofertaUrl);
+C.cartaImagenes = (Array.isArray(C.cartaImagenes) ? C.cartaImagenes : []).filter(u => segImg(u)).slice(0, 12);
+if (!/^#[0-9a-f]{3,8}$/i.test(C.acento || '')) C.acento = '';
+C.nombre = C.nombre || ''; C.descripcion = C.descripcion || '';
+const cat = C.tipoCarta === 'catalogo';
+C.redes = (Array.isArray(C.redes) ? C.redes : []).filter(r => r && seg(r.url)); C.transferencia = C.transferencia || {};
+if (C.estilo === 'oscuro') document.documentElement.dataset.estilo = 'oscuro';
+document.title = C.nombre + ' · ' + (cat ? 'Catálogo digital' : 'Menú digital');
+$('tipo-badge').textContent = cat ? 'Catálogo digital' : 'Menú digital';
+if (C.acento) {
+  document.documentElement.style.setProperty('--accent', C.acento);
+  const n = C.acento.slice(1);
+  if (n.length === 6 || n.length === 3){
+    const hex = n.length === 3 ? [...n].map(x => x+x).join('') : n;
+    const rgb = [0,2,4].map(i => parseInt(hex.slice(i,i+2),16)/255);
+    const lin = rgb.map(x => x <= .04045 ? x / 12.92 : Math.pow((x+.055)/1.055,2.4));
+    const luz = lin[0]*.2126 + lin[1]*.7152 + lin[2]*.0722;
+    document.documentElement.style.setProperty('--on-accent', luz>.42 ? '#172521' : '#FFFFFF');
+    document.documentElement.style.setProperty('--accent-2', 'color-mix(in srgb,' + C.acento + ' 72%, #e4b28f)');
+  }
+}
+if (C.fondo){
+  const fondo = $('fondo');
+  fondo.style.backgroundImage = 'url(' + JSON.stringify(C.fondo) + ')';
+  const intensidad = Number(C.fondoIntensidad);
+  fondo.style.opacity = String(Number.isFinite(intensidad) && C.fondoIntensidad !== undefined ? Math.min(100,Math.max(0,intensidad))/100 : .62);
+}
+$('nombre').textContent = C.nombre;
+$('desc').textContent = C.descripcion;
+if (C.logo){ const i = el('img'); i.src = C.logo; i.alt = ''; i.onerror = () => { i.remove(); $('logo').textContent = C.nombre.charAt(0).toUpperCase(); }; $('logo').appendChild(i); }
+else $('logo').textContent = C.nombre.charAt(0).toUpperCase();
+if (C.ofertaActiva === true && C.ofertaUrl){
+  const enlace = $('oferta-link');
+  const texto = String(C.ofertaTexto || '').trim().slice(0, 80) || 'OFERTAS DEL DÍA';
+  $('oferta-titulo').textContent = texto;
+  enlace.href = C.ofertaUrl;
+  enlace.setAttribute('aria-label', texto + ' (se abre en una pestaña nueva)');
+  enlace.hidden = false;
+}
+if (C.cartaImagenes.length){
+  const titulo = cat ? 'Ver catálogo' : 'Ver carta';
+  crearAccion({texto:titulo, subtitulo:'Abre la información principal del negocio', icono:ICON.book, main:true, onClick:() => abrirVisor(C.cartaImagenes, null, cat ? 'Catálogo' : 'Carta')});
+} else if (C.cartaUrl) {
+  crearAccion({texto:cat ? 'Ver catálogo' : 'Ver carta', subtitulo:'Abre la información principal del negocio', url:C.cartaUrl, icono:ICON.book, main:true});
+}
+if (C.mapsUrl) crearAccion({texto:'Cómo llegar', subtitulo:'Abre la ubicación al instante', url:C.mapsUrl, icono:ICON.pin});
+if (C.resenaUrl) crearAccion({texto:'Dejar reseña', subtitulo:'Comparte tu experiencia', url:C.resenaUrl, icono:ICON.star});
+if (!$('actions').children.length) $('actions-empty').hidden = false;
+if (C.redes.length){
+  $('redes-sec').hidden = false;
+  C.redes.forEach(r => {
+    const a = el('a', 'social-btn'); a.href = r.url; a.target = '_blank'; a.rel = 'noopener';
+    a.innerHTML = iconoRed(r) + '<span class="social-name">' + r.nombre + '</span>';
+    $('redes').appendChild(a);
+  });
+}
+const datos = Object.entries(C.transferencia).filter(([, v]) => v);
+if (datos.length){
+  $('pago-sec').hidden = false;
+  datos.forEach(([k, v]) => {
+    const row = el('div', 'pay-row'), info = el('div', 'pay-info');
+    info.appendChild(el('small', null, k)); info.appendChild(el('span', null, v));
+    const b = el('button', 'copy', 'Copiar'); b.type = 'button';
+    b.setAttribute('aria-label', 'Copiar ' + k);
+    b.onclick = () => copiar(v, b);
+    row.appendChild(info); row.appendChild(b); $('pago').appendChild(row);
+  });
+  $('copyall').onclick = e => copiar(datos.map(([k, v]) => k + ': ' + v).join('\n'), e.currentTarget);
+}
+$('footer').textContent = (cat ? 'Catálogo digital' : 'Menú digital') + ' · ' + C.nombre;
+configurarDock();
+}
+/* Granos de café físicos: aparecen al desplazarse y se apilan de abajo hacia arriba.
+   No se usan librerías: canvas 2D, gravedad, límites, choques entre círculos,
+   rebotes amortiguados y fricción. Granos detallados precalculados para móviles. */
+(function iniciarCafe(){
+  const lienzo = $('cafe-lienzo');
+  const ctx = lienzo && lienzo.getContext('2d', {alpha:true});
+  if (!ctx || !window.requestAnimationFrame) return;
+  const reducir = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reducir.matches) return;
+
+  const granos = [];
+  const sprites = new Map();
+  const G = 550;                   // Gravedad (px/s²)
+  const REBOTE = .26;               // Elasticidad de las paredes y choques
+  const TAMANO_CELDA = 80;          // Recalculado según radio en redimensiones
+  let ancho=1, alto=1, escala=1, radioBase=21, celda=TAMANO_CELDA;
+  let maxGranos=180, deuda=0, anteriorScroll=window.scrollY||0;
+  let instanteEntrada=0, ultimoFrame=0, acumulador=0;
+  let raf=0, ultimoSpawn=0;
+  let toqueAnterior=null, direccion=1;
+  // En móvil el viewport visual cambia al esconderse la barra de direcciones.
+  // Unificamos dimensiones CSS y canvas usando la misma medición, y conservamos
+  // la distancia de cada grano al suelo durante esos cambios.
+  const viewportVisual = window.visualViewport || null;
+  let pendienteViewport=0, desplazX=null, desplazY=null;
+
+  function limites(b){
+    if (b.x < b.r){b.x=b.r;if(b.vx<0)b.vx=-b.vx*REBOTE;}
+    if (b.x > ancho-b.r){b.x=ancho-b.r;if(b.vx>0)b.vx=-b.vx*REBOTE;}
+    if (b.y > alto-b.r){
+      b.y=alto-b.r;
+      if (b.vy>32) b.vy=-b.vy*REBOTE;
+      else b.vy=0;
+      b.vx*=.92;
+      if(Math.abs(b.vx)<4)b.vx=0;
+    }
+    if (b.y < b.r && b.vy < 0){b.y=b.r;b.vy=-b.vy*REBOTE;}
+  }
+
+  /* Granos tostados con relieve, veta central, poros y brillo natural.
+     Cada tamaño/tueste se dibuja una sola vez a alta resolución (sin imágenes
+     externas), luego se reutiliza como sprite para que los móviles vayan fluidos. */
+  function sprite(r, variante){
+    const radio=Math.max(10,Math.round(r/2)*2);
+    const id=radio+'-'+variante;
+    if(sprites.has(id))return sprites.get(id);
+    const pad=Math.max(6,Math.ceil(r*.17)), lado=2*(radio+pad);
+    const p=document.createElement('canvas');
+    const densidad=2.65;
+    p.width=p.height=Math.ceil(lado*densidad);
+    const c=p.getContext('2d');
+    c.scale(p.width/lado,p.height/lado);
+    c.translate(lado/2,lado/2);
+    // Perfil alargado característico del grano, sin alterar colisiones ni rebotes.
+    c.scale(radio*.81,radio*1.07);
+
+    // Paleta de tuestes ligeramente distintos; la iluminación proviene de arriba.
+    const tuestes=[
+      ['#a66539','#703b21','#30180f','#d38a50'],
+      ['#86502e','#552b19','#26130d','#b67745'],
+      ['#99552c','#63301a','#2c150d','#d09054'],
+      ['#704127','#452518','#22120d','#ae7246']
+    ];
+    const [luz,medio,oscuro,brillo]=tuestes[variante%tuestes.length];
+    const contorno=()=>{
+      c.beginPath();
+      c.moveTo(-.11,-.97);
+      c.bezierCurveTo(-.70,-1.03,-1.02,-.60,-.96,-.09);
+      c.bezierCurveTo(-.92,.43,-.56,1.00,.03,1.00);
+      c.bezierCurveTo(.61,1.04,.99,.51,.94,-.06);
+      c.bezierCurveTo(.91,-.54,.47,-1.02,-.11,-.97);
+      c.closePath();
+    };
+
+    // Sombra ambiental suave para separar cada grano del fondo claro u oscuro.
+    c.save();
+    c.translate(.042,.065);
+    c.shadowColor='rgba(15,7,3,.44)';
+    c.shadowBlur=.115;
+    c.shadowOffsetY=.048;
+    c.fillStyle='#29170f';
+    contorno();c.fill();
+    c.restore();
+
+    // Superficie convexa tridimensional, no un óvalo plano.
+    const cuerpo=c.createRadialGradient(-.39,-.48,.04,.30,.23,1.42);
+    cuerpo.addColorStop(0,brillo);
+    cuerpo.addColorStop(.19,luz);
+    cuerpo.addColorStop(.52,medio);
+    cuerpo.addColorStop(.81,oscuro);
+    cuerpo.addColorStop(1,'#140b08');
+    c.fillStyle=cuerpo;contorno();c.fill();
+    c.save();contorno();c.clip();
+
+    // Reflejo satinado irregular propio de un grano de café tostado.
+    const esmalte=c.createLinearGradient(-.9,-.94,.86,.89);
+    esmalte.addColorStop(0,'rgba(255,215,157,.26)');
+    esmalte.addColorStop(.20,'rgba(255,193,109,.085)');
+    esmalte.addColorStop(.52,'rgba(29,11,5,.19)');
+    esmalte.addColorStop(.82,'rgba(5,2,1,.25)');
+    esmalte.addColorStop(1,'rgba(0,0,0,.48)');
+    c.fillStyle=esmalte;c.fillRect(-1.1,-1.1,2.2,2.2);
+
+    // Pequeñas marcas y poros fijos por variante: cada sprite parece orgánico.
+    let seed=(variante+7)*72431+radio*1597;
+    const azar=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
+    for(let i=0;i<300;i++){
+      const x=(azar()*2-1)*.98,y=(azar()*2-1)*1.03;
+      const d=.006+azar()*.019;
+      c.beginPath();c.ellipse(x,y,d,d*(.32+azar()*.6),azar()*Math.PI,0,Math.PI*2);
+      c.fillStyle=azar()<.52?'rgba(21,10,6,.15)':'rgba(250,192,125,.15)';
+      c.fill();
+    }
+    for(let i=0;i<46;i++){
+      const x=(azar()*2-1)*.9,y=(azar()*2-1)*.95;
+      c.beginPath();
+      c.moveTo(x,y);
+      c.quadraticCurveTo(x+.015,y-.055,x+(azar()-.5)*.07,y-.08-azar()*.07);
+      c.strokeStyle=azar()<.65?'rgba(27,12,6,.21)':'rgba(250,172,105,.19)';
+      c.lineWidth=.009+azar()*.007;c.stroke();
+    }
+
+    // Veta central sinuosa con dos bordes iluminados y un surco profundo.
+    const fisura=()=>{
+      c.beginPath();c.moveTo(-.12,-.91);
+      c.bezierCurveTo(.30,-.66,.19,-.43,-.035,-.25);
+      c.bezierCurveTo(-.26,-.075,.28,.12,.045,.33);
+      c.bezierCurveTo(-.17,.53,-.14,.71,.08,.89);
+    };
+    c.save();c.translate(-.050,-.015);
+    fisura();c.lineWidth=.205;c.lineCap='round';
+    c.strokeStyle='rgba(15,6,3,.56)';c.stroke();
+    c.restore();
+    c.save();c.translate(.071,.004);
+    fisura();c.lineWidth=.10;c.lineCap='round';
+    c.strokeStyle='rgba(228,143,83,.42)';c.stroke();
+    c.restore();
+    fisura();c.lineWidth=.126;c.lineCap='round';
+    c.strokeStyle='#241008';c.stroke();
+    fisura();c.lineWidth=.055;
+    c.strokeStyle='rgba(6,3,2,.90)';c.stroke();
+    c.save();c.translate(-.016,0);
+    fisura();c.lineWidth=.020;
+    c.strokeStyle='rgba(197,122,66,.66)';c.stroke();
+    c.restore();
+
+    // Lomos curvos con reflejos finos y un leve borde oscuro.
+    c.beginPath();c.moveTo(-.66,-.69);
+    c.bezierCurveTo(-.94,-.28,-.81,.43,-.40,.78);
+    c.strokeStyle='rgba(240,165,93,.26)';c.lineWidth=.075;c.stroke();
+    c.beginPath();c.moveTo(.48,-.73);
+    c.bezierCurveTo(.84,-.34,.77,.46,.37,.81);
+    c.strokeStyle='rgba(16,7,4,.33)';c.lineWidth=.08;c.stroke();
+    c.beginPath();c.ellipse(-.43,-.62,.19,.075,-.68,0,Math.PI*2);
+    c.fillStyle='rgba(255,207,147,.17)';c.fill();
+    c.restore();
+    contorno();c.lineWidth=.040;c.strokeStyle='rgba(25,11,7,.77)';c.stroke();
+    // Un contorno iluminado discontinuo refuerza el volumen en tamaños pequeños.
+    c.beginPath();c.moveTo(-.83,-.35);
+    c.bezierCurveTo(-.81,-.76,-.36,-.98,-.02,-.92);
+    c.strokeStyle='rgba(241,162,104,.27)';c.lineWidth=.028;c.stroke();
+
+    const result={image:p,lado};
+    // Evitar el crecimiento indefinido de la caché en pantallas redimensionables.
+    if(sprites.size>=110)sprites.delete(sprites.keys().next().value);
+    sprites.set(id,result);
+    return result;
+  }
+
+  function dibujar(){
+    ctx.clearRect(0,0,ancho,alto);
+    for(const b of granos){
+      const s=sprite(b.r,b.variante);
+      ctx.save();
+      ctx.translate(b.x,b.y);
+      ctx.rotate(b.angulo);
+      ctx.drawImage(s.image,-s.lado/2,-s.lado/2,s.lado,s.lado);
+      ctx.restore();
+    }
+  }
+
+  function medidas(){
+    // visualViewport.height mide lo que el usuario realmente ve, incluso cuando
+    // aparece o desaparece la barra inferior de Chrome / Safari.
+    const vw=viewportVisual ? viewportVisual.width : document.documentElement.clientWidth;
+    const vh=viewportVisual ? viewportVisual.height : window.innerHeight;
+    const nuevoAncho=Math.max(1,Math.round(vw));
+    const nuevoAlto=Math.max(1,Math.round(vh));
+    const dx=viewportVisual ? viewportVisual.offsetLeft : 0;
+    const dy=viewportVisual ? viewportVisual.offsetTop : 0;
+
+    // Durante algunos gestos solo se mueve el viewport visual (no su tamaño).
+    // Ajustar su origen evita que el lienzo aparente "regresar" al hacer scroll.
+    if(desplazX===null || desplazY===null || Math.abs(dx-desplazX)>.25 || Math.abs(dy-desplazY)>.25){
+      lienzo.style.transform='translate3d('+dx+'px,'+dy+'px,0)';
+      desplazX=dx;desplazY=dy;
+    }
+
+    // Ignorar redimensiones minúsculas que causan recálculos continuos en móviles.
+    if(Math.abs(nuevoAncho-ancho)<2 && Math.abs(nuevoAlto-alto)<2)return;
+    const viejoAncho=ancho,viejoAlto=alto;
+    ancho=nuevoAncho;alto=nuevoAlto;
+    lienzo.style.width=ancho+'px';
+    lienzo.style.height=alto+'px';
+    escala=Math.min(window.devicePixelRatio||1,ancho>900?1.25:1.75);
+    lienzo.width=Math.round(ancho*escala);
+    lienzo.height=Math.round(alto*escala);
+    ctx.setTransform(escala,0,0,escala,0,0);
+    radioBase=ancho<600?Math.max(17,Math.min(22,ancho*.053)):Math.max(25,Math.min(52,ancho*.028));
+    celda=Math.ceil(radioBase*2.8);
+    maxGranos=Math.min(580,Math.ceil((ancho*alto)/(Math.PI*radioBase*radioBase)*.85));
+    if(viejoAncho>1&&viejoAlto>1){
+      const diferenciaSuelo=alto-viejoAlto;
+      for(const b of granos){
+        // En un cambio de barra del navegador, se mueve el suelo, no el mundo:
+        // no escalar proporcionalmente la altura (provocaba el salto de la pila).
+        if(Math.abs(ancho-viejoAncho)>1){
+          b.x=Math.max(b.r,Math.min(ancho-b.r,b.x/viejoAncho*ancho));
+        }
+        b.y=Math.max(b.r,Math.min(alto-b.r,b.y+diferenciaSuelo));
+        limites(b);
+      }
+    }
+    dibujar();
+    if(granos.length)activar();
+  }
+
+  function programarMedidas(){
+    if(!pendienteViewport){
+      pendienteViewport=requestAnimationFrame(()=>{
+        pendienteViewport=0;
+        medidas();
+      });
+    }
+  }
+
+  function crear(){
+    if(granos.length>=maxGranos)return;
+    const factor=.72+Math.random()*.58;
+    const r=Math.round(radioBase*factor);
+    const x=r+Math.random()*Math.max(1,ancho-2*r);
+    granos.push({x,y:-r-4,vx:(Math.random()-.5)*140+direccion*28,
+      vy:35+Math.random()*70,r,invMasa:1/(r*r),variante:Math.floor(Math.random()*4),angulo:Math.random()*Math.PI*2,
+      giro:(Math.random()-.5)*5.1});
+    ultimoSpawn=performance.now();
+    activar();
+  }
+
+  function mover(dt){
+    const freno=Math.pow(.993,dt*60);
+    for(const b of granos){
+      b.vy=Math.min(1450,b.vy+G*dt);
+      b.vx*=freno;
+      b.x+=b.vx*dt;b.y+=b.vy*dt;
+      // Rotación visual del grano al caer y frenado progresivo al asentarse.
+      b.angulo+=b.giro*dt;
+      if(b.y>=alto-b.r-2 && Math.abs(b.vy)<38){
+        b.giro*=Math.pow(.88,dt*60);
+      } else {
+        b.giro*=Math.pow(.997,dt*60);
+      }
+      limites(b);
+    }
+    // Cuadrícula espacial: sólo se comparan granos cercanas.
+    for(let iter=0;iter<16;iter++){
+      const grid=new Map();
+      for(let i=0;i<granos.length;i++){
+        const b=granos[i];
+        const cx=Math.floor(b.x/celda), cy=Math.floor(b.y/celda);
+        const k=cx+','+cy;
+        if(!grid.has(k))grid.set(k,[]);
+        grid.get(k).push(i);
+      }
+      for(let i=0;i<granos.length;i++){
+        const a=granos[i],cx=Math.floor(a.x/celda),cy=Math.floor(a.y/celda);
+        for(let gx=cx-1;gx<=cx+1;gx++)for(let gy=cy-1;gy<=cy+1;gy++){
+          const indices=grid.get(gx+','+gy);if(!indices)continue;
+          for(const j of indices){
+            if(j<=i)continue;
+            const b=granos[j],dx=b.x-a.x,dy=b.y-a.y,rad=a.r+b.r;
+            const dist2=dx*dx+dy*dy;
+            if(dist2>=rad*rad)continue;
+            let distancia=Math.sqrt(dist2);
+            const nx=distancia>0.00001?dx/distancia:1;
+            const ny=distancia>0.00001?dy/distancia:0;
+            if(!distancia)distancia=.00001;
+            const solape=rad-distancia;
+            const masa=a.invMasa+b.invMasa;
+            const correccion=Math.max(0,solape-.07)*.92/masa;
+            a.x-=nx*correccion*a.invMasa;a.y-=ny*correccion*a.invMasa;
+            b.x+=nx*correccion*b.invMasa;b.y+=ny*correccion*b.invMasa;
+            // Choque con impulso normal y fricción tangencial.
+            const vx=b.vx-a.vx,vy=b.vy-a.vy;
+            const normal=vx*nx+vy*ny;
+            if(normal<0){
+              const rest=normal< -65?REBOTE:.02;
+              const impulso=-(1+rest)*normal/masa;
+              a.vx-=nx*impulso*a.invMasa;a.vy-=ny*impulso*a.invMasa;
+              b.vx+=nx*impulso*b.invMasa;b.vy+=ny*impulso*b.invMasa;
+              const tx=-ny,ty=nx;
+              const tangente=(b.vx-a.vx)*tx+(b.vy-a.vy)*ty;
+              const rozamiento=Math.max(-impulso*.10,Math.min(impulso*.10,-tangente/masa));
+              a.vx-=tx*rozamiento*a.invMasa;a.vy-=ty*rozamiento*a.invMasa;
+              b.vx+=tx*rozamiento*b.invMasa;b.vy+=ty*rozamiento*b.invMasa;
+            }
+          }
+        }
+        limites(a);
+      }
+    }
+  }
+
+  function animar(t){
+    raf=0;
+    if(document.hidden){ultimoFrame=0;return;}
+    if(!ultimoFrame)ultimoFrame=t;
+    acumulador+=Math.min(.05,(t-ultimoFrame)/1000);ultimoFrame=t;
+    let pasos=0;
+    while(acumulador>=1/60&&pasos<3){mover(1/60);acumulador-=1/60;pasos++;}
+    if(pasos===3)acumulador=0;
+    dibujar();
+    // Tras el reposo, detenemos el motor sin borrar la pila: ahorra batería.
+    if(t-ultimoSpawn>8500){ultimoFrame=0;acumulador=0;return;}
+    raf=requestAnimationFrame(animar);
+  }
+  function activar(){
+    if(!raf&&!document.hidden){ultimoFrame=0;raf=requestAnimationFrame(animar);}
+  }
+
+  // Usamos gestos reales además del evento scroll: así también nacen granos
+  // cuando el usuario sigue deslizando en el final de un menú muy corto.
+  function registrarMovimiento(delta){
+    if(!delta||reducir.matches||document.body.style.overflow==='hidden')return;
+    direccion=delta>0?1:-1;
+    const impulso=Math.min(280,Math.abs(delta));
+    deuda+=impulso;
+    let cantidad=0;
+    while(deuda>=35&&cantidad<9&&granos.length<maxGranos){
+      crear();deuda-=35;cantidad++;
+    }
+    // No acumular deuda de movimiento si la pantalla ya está llena.
+    if(granos.length>=maxGranos)deuda=0;
+  }
+  window.addEventListener('wheel',e=>{
+    if(e.ctrlKey)return;
+    instanteEntrada=performance.now();
+    const delta=e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?alto:1);
+    registrarMovimiento(delta);
+  },{passive:true});
+  window.addEventListener('touchstart',e=>{
+    toqueAnterior=e.touches.length===1?e.touches[0].clientY:null;
+  },{passive:true});
+  window.addEventListener('touchmove',e=>{
+    if(e.touches.length!==1||toqueAnterior===null)return;
+    const actual=e.touches[0].clientY;
+    instanteEntrada=performance.now();
+    registrarMovimiento(toqueAnterior-actual);
+    toqueAnterior=actual;
+  },{passive:true});
+  window.addEventListener('touchend',()=>toqueAnterior=null,{passive:true});
+  window.addEventListener('touchcancel',()=>toqueAnterior=null,{passive:true});
+  window.addEventListener('scroll',()=>{
+    const nuevo=window.scrollY||0,delta=nuevo-anteriorScroll;
+    anteriorScroll=nuevo;
+    if(performance.now()-instanteEntrada>170)registrarMovimiento(delta);
+  },{passive:true});
+  window.addEventListener('resize',programarMedidas,{passive:true});
+  window.addEventListener('orientationchange',programarMedidas,{passive:true});
+  // iOS Safari y Chrome Android no siempre emiten resize de window por las
+  // barras flotantes; estos eventos sí reflejan el área visible real.
+  if(viewportVisual){
+    viewportVisual.addEventListener('resize',programarMedidas,{passive:true});
+    viewportVisual.addEventListener('scroll',programarMedidas,{passive:true});
+  }
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&granos.length)activar();});
+  if(reducir.addEventListener)reducir.addEventListener('change',()=>{
+    if(reducir.matches){if(raf)cancelAnimationFrame(raf);raf=0;ctx.clearRect(0,0,ancho,alto);}
+    else {dibujar();activar();}
+  });
+  medidas();
+})();
+
+/* Carga los datos del negocio:
+   menu.html?d=...   -> los datos vienen dentro del link (no hay que subir nada)
+   menu.html?n=slug  -> los datos se leen de datos/slug.json */
+const P = new URLSearchParams(location.search);
+const slug = P.get('n') || '', cod = P.get('d');
+function noEncontrada(detalle){
+  $('logo').hidden = true;
+  $('nombre').textContent = 'Página no encontrada';
+  $('desc').textContent = 'Revisa el link o vuelve a escanear el código QR.' + (detalle ? ' (' + detalle + ')' : '');
+}
+function decodificar(t){
+  t = t.replace(/-/g, '+').replace(/_/g, '/'); while (t.length % 4) t += '=';
+  return JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(t), c => c.charCodeAt(0))));
+}
+if (cod){
+  try { render(decodificar(cod)); } catch(e){ noEncontrada('el link está incompleto o dañado'); }
+} else if (/^[a-z0-9-]+$/i.test(slug)){
+  fetch('datos/' + slug + '.json', { cache: 'no-store' })
+    .then(r => { if (!r.ok) throw new Error('no se encontró datos/' + slug + '.json'); return r.json(); })
+    .then(render).catch(e => noEncontrada(e.message));
+} else noEncontrada('el link no incluye los datos del negocio');
+
+</script>
+</body>
+</html>
