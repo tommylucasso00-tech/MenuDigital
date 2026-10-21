@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101014">
+<title>Menú digital · Edición Luxury</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#C9A76A;--on-accent:#17120d;
+  --bg:#0e1014;--bg-soft:#17191c;--surface:rgba(27,28,31,.89);
+  --surface-strong:rgba(30,31,34,.97);--ink:#f7f3eb;--muted:#b8afa0;
+  --edge:rgba(206,177,119,.24);--muted-edge:rgba(240,231,213,.12);
+  --accent-soft:rgba(201,167,106,.12);--deep-shadow:0 18px 50px rgba(0,0,0,.28);
+  color-scheme:dark;
+}
+:root[data-estilo="claro"]{
+  --bg:#f4efe6;--bg-soft:#e9e0d0;--surface:rgba(255,253,248,.90);
+  --surface-strong:rgba(255,253,248,.98);--ink:#231f1b;--muted:#625b50;
+  --edge:rgba(121,84,37,.28);--muted-edge:rgba(91,74,50,.16);
+  --accent-soft:rgba(161,120,58,.12);--deep-shadow:0 20px 46px rgba(71,53,29,.12);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{min-height:100%;scroll-behavior:smooth;scroll-padding-top:18px}
+body{margin:0;position:relative;isolation:isolate;min-height:100vh;overflow-x:hidden;background:var(--bg);color:var(--ink);font-family:'Manrope','DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer}
+[hidden]{display:none!important}
+:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.backdrop{position:absolute;inset:0;z-index:-2;overflow:hidden;pointer-events:none;background:radial-gradient(ellipse 65% 22% at 50% 8%,rgba(166,134,82,.15),transparent 90%),radial-gradient(ellipse 80% 28% at 12% 62%,rgba(130,115,93,.08),transparent 85%),var(--bg)}
+.backdrop-image{position:absolute;inset:0;opacity:0;filter:saturate(.62);background-repeat:no-repeat;background-size:cover;background-position:center}
+.backdrop::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,16,20,.15),var(--bg) 83%);pointer-events:none}
+:root[data-estilo="claro"] .backdrop::after{background:linear-gradient(180deg,rgba(244,239,230,.18),var(--bg) 85%)}
+.backdrop-lines{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.16;background:repeating-linear-gradient(90deg,transparent 0px,transparent 79px,var(--edge) 80px,transparent 81px);mask-image:linear-gradient(180deg,black,transparent 92%)}
+.sparkles{position:fixed;inset:0;z-index:0;pointer-events:none;width:100%;height:100%}
+.shell{position:relative;z-index:1;width:min(100%,560px);margin:0 auto;padding:0 17px calc(116px + env(safe-area-inset-bottom));}
+/* Cabecera: un medallón central y el nombre como pieza editorial. */
+.topline{display:flex;align-items:center;justify-content:space-between;padding:24px 5px 6px;gap:12px}
+.topline-brand{font-size:10px;font-weight:800;letter-spacing:.26em;text-transform:uppercase;color:var(--muted)}
+.topline-mark{display:inline-grid;place-items:center;width:34px;height:34px;border:1px solid var(--edge);border-radius:50%;font-family:Georgia,serif;color:var(--accent);font-size:17px;box-shadow:inset 0 0 0 4px var(--accent-soft)}
+.hero{position:relative;isolation:isolate;padding:23px 25px 27px;margin-top:14px;text-align:center;border-radius:160px 160px 27px 27px;overflow:hidden;border:1px solid var(--edge);background:linear-gradient(160deg,rgba(192,160,108,.12),transparent 39%),linear-gradient(0deg,var(--surface),var(--surface-strong));box-shadow:var(--deep-shadow)}
+.hero::before{content:"";position:absolute;inset:10px 10px 10px;border:1px solid var(--muted-edge);border-radius:155px 155px 20px 20px;pointer-events:none}
+.hero::after{content:"";position:absolute;inset:0 25% auto;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.8}
+.hero-ornament{height:22px;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--accent);margin-bottom:5px}
+.hero-ornament::before,.hero-ornament::after{content:"";width:30px;height:1px;background:linear-gradient(90deg,transparent,var(--accent))}
+.hero-ornament::after{transform:rotate(180deg)}
+.hero-ornament span{font-size:12px}
+.logo-frame{position:relative;width:108px;height:108px;margin:0 auto 14px;border-radius:50%;border:1px solid var(--edge);display:grid;place-items:center;background:radial-gradient(circle at 28% 15%,var(--accent-soft),transparent 65%),var(--bg-soft);box-shadow:0 12px 35px rgba(0,0,0,.28),inset 0 0 0 6px rgba(255,255,255,.02)}
+.logo-frame::before,.logo-frame::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:1px dashed var(--edge);opacity:.7;pointer-events:none}
+.logo-frame::after{inset:6px;border:1px solid var(--muted-edge);opacity:.8}
+.logo{width:86px;height:86px;border-radius:50%;display:grid;place-items:center;overflow:hidden;font-size:37px;font-family:'Playfair Display',Georgia,serif;color:var(--accent);font-weight:600}
+.logo img{display:block;width:100%;height:100%;object-fit:contain;border-radius:50%}
+.hero-kicker{display:block;text-transform:uppercase;font-size:9px;letter-spacing:.31em;font-weight:800;color:var(--accent);margin:18px 0 7px}
+.hero h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(37px,10vw,53px);line-height:1.08;letter-spacing:-.043em;font-weight:500;margin:0;overflow-wrap:anywhere}
+.hero .desc{max-width:37ch;font-size:13px;font-weight:500;line-height:1.8;color:var(--muted);margin:15px auto 0;white-space:pre-line}
+.hero-end{width:80px;height:16px;margin:17px auto 0;display:flex;align-items:center;gap:6px;justify-content:center;opacity:.82}
+.hero-end::before,.hero-end::after{content:"";width:25px;height:1px;background:var(--accent)}
+.hero-end span{width:6px;height:6px;transform:rotate(45deg);border:1px solid var(--accent)}
+/* Promoción de estilo invitación VIP. */
+.promo{position:relative;display:flex;align-items:center;gap:12px;min-height:82px;margin:15px 0 0;padding:16px 17px;border-radius:15px 40px 15px 40px;overflow:hidden;border:1px solid color-mix(in srgb,var(--accent) 53%,var(--edge));background:linear-gradient(104deg,color-mix(in srgb,var(--accent) 25%,var(--bg-soft)),var(--bg-soft) 82%);box-shadow:0 12px 30px rgba(0,0,0,.15)}
+.promo::after{content:"";position:absolute;inset:5px;border:1px solid var(--muted-edge);border-radius:11px 36px 11px 36px;pointer-events:none}
+.promo-emblem{display:grid;place-items:center;flex:none;width:46px;height:46px;clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);background:var(--accent);color:var(--on-accent);font-size:21px}
+.promo-copy{min-width:0;flex:1;position:relative;z-index:1}
+.promo-small{display:block;color:var(--accent);font-size:10px;letter-spacing:.2em;font-weight:800;text-transform:uppercase;margin-bottom:3px}
+.promo-title{display:block;font-size:16px;font-weight:800;line-height:1.25;overflow-wrap:anywhere}
+.promo-arrow{display:grid;place-items:center;width:33px;height:33px;border:1px solid var(--edge);border-radius:50%;font-size:22px;color:var(--accent);flex:none}
+/* Acciones: botones amplios con laterales curvos y medallones redondos. */
+.chapter{margin:25px 2px 13px;display:flex;align-items:center;gap:12px}
+.chapter-num{font-family:'Playfair Display',Georgia,serif;font-size:17px;color:var(--accent)}
+.chapter-copy{min-width:0;flex:1}
+.chapter h2{font-size:14px;font-weight:800;letter-spacing:.035em;text-transform:uppercase;margin:0}
+.chapter p{margin:3px 0 0;color:var(--muted);font-size:11px}
+.chapter-line{height:1px;background:linear-gradient(90deg,var(--edge),transparent);width:25%}
+.actions{display:flex;flex-direction:column;gap:12px}
+.action-btn{position:relative;display:flex;align-items:center;gap:16px;min-height:82px;width:100%;padding:14px 16px 14px 13px;border:1px solid var(--muted-edge);border-radius:44px 16px 44px 15px;background:linear-gradient(114deg,var(--surface-strong),var(--surface));box-shadow:var(--deep-shadow);text-align:left;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.action-btn:nth-child(even){border-radius:16px 44px 15px 44px;padding-left:20px}
+.action-btn:hover,.action-btn:focus-visible{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 18px 36px rgba(0,0,0,.26)}
+.action-btn:active{transform:scale(.985)}
+.action-btn.main{min-height:116px;border-color:color-mix(in srgb,var(--accent) 54%,var(--edge));background:linear-gradient(112deg,color-mix(in srgb,var(--accent) 18%,var(--bg-soft)),var(--surface) 70%);border-radius:52px 20px 52px 20px}
+.action-btn .orb{display:grid;place-items:center;flex:none;width:58px;height:58px;border-radius:50%;color:var(--accent);background:var(--accent-soft);border:1px solid var(--edge);box-shadow:inset 0 0 0 5px rgba(255,255,255,.018)}
+.action-btn.main .orb{width:75px;height:75px;box-shadow:inset 0 0 0 6px var(--surface),0 0 20px var(--accent-soft);background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.orb svg{width:23px;height:23px}
+.action-btn.main .orb svg{width:30px;height:30px}
+.action-text{flex:1;min-width:0}
+.action-kicker{display:block;color:var(--accent);font-size:9px;text-transform:uppercase;letter-spacing:.18em;font-weight:800;margin-bottom:4px}
+.action-title{display:block;font-size:17px;font-weight:800;line-height:1.25;overflow-wrap:anywhere}
+.action-btn.main .action-title{font-family:'Playfair Display',Georgia,serif;font-size:28px;font-weight:600;line-height:1.12}
+.action-caption{display:block;color:var(--muted);font-size:11px;margin-top:4px;font-weight:600}
+.action-arrow{display:grid;place-items:center;flex:none;font-size:22px;width:31px;height:31px;color:var(--accent);border-radius:50%;border:1px solid var(--edge)}
+/* Redes: botones anchos como piezas metálicas. */
+.sheet{margin-top:25px;padding:19px 16px 18px;border:1px solid var(--muted-edge);border-radius:30px 30px 20px 20px;background:var(--surface);box-shadow:var(--deep-shadow)}
+.sheet-heading{display:flex;align-items:center;gap:13px;margin-bottom:15px}
+.sheet-symbol{width:42px;height:42px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--edge);background:var(--accent-soft);color:var(--accent)}
+.sheet-symbol svg{width:21px;height:21px}
+.sheet-heading h2{margin:0;font-size:18px;font-family:'Playfair Display',Georgia,serif;font-weight:600}
+.sheet-heading p{margin:1px 0 0;color:var(--muted);font-size:11px}
+.social-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.social-btn{display:flex;align-items:center;gap:10px;min-width:0;min-height:66px;border-radius:34px 10px 34px 10px;padding:9px 10px;background:var(--surface-strong);border:1px solid var(--muted-edge);transition:border-color .18s ease,transform .18s ease}
+.social-btn:nth-child(even){border-radius:10px 34px 10px 34px}
+.social-btn:hover,.social-btn:focus-visible{transform:translateY(-2px);border-color:var(--accent)}
+.social-symbol{width:43px;height:43px;min-width:43px;display:grid;place-items:center;border-radius:50%;background:#e5e3e0;overflow:hidden}
+.social-symbol svg{width:25px;height:25px;display:block}
+.social-symbol.instagram{background:linear-gradient(145deg,#fce2a7,#ffdfeb 45%,#e4dcfc)}
+.social-symbol.whatsapp{background:#e4f8e9}
+.social-symbol.facebook{background:#e5f0ff}
+.social-symbol.tiktok{background:#e8ebf0}
+.social-symbol.youtube{background:#ffeded}
+.social-symbol.x{background:#e7e8eb}
+.social-symbol.web{background:#e4f4f1}
+.social-label{font-weight:800;font-size:12px;overflow-wrap:anywhere;min-width:0}
+/* Datos de pago con copia de gran tamaño táctil. */
+.payment-list{display:flex;flex-direction:column;gap:9px}
+.pay-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 12px 13px 15px;border:1px solid var(--muted-edge);border-radius:15px 28px 15px 28px;background:var(--surface-strong)}
+.pay-row:nth-child(even){border-radius:28px 15px 28px 15px}
+.pay-info{min-width:0}
+.pay-info small{display:block;color:var(--muted);font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;margin-bottom:4px}
+.pay-info span{display:block;font-size:13px;font-weight:700;overflow-wrap:anywhere}
+.copy{flex:none;min-width:71px;min-height:44px;border-radius:22px 9px 22px 9px;border:1px solid var(--edge);background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:800}
+.copy.ok{background:var(--accent);color:var(--on-accent)}
+.copyall{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:56px;margin-top:13px;border:1px solid var(--accent);border-radius:99px;background:var(--accent);color:var(--on-accent);font-size:13px;font-weight:800;box-shadow:0 15px 25px var(--accent-soft)}
+.copyall svg{width:18px;height:18px}
+.footer{text-align:center;font-size:10px;color:var(--muted);margin:29px auto 0;letter-spacing:.13em;text-transform:uppercase;font-weight:700}
+.footer::before{content:"✦";display:block;color:var(--accent);font-size:16px;margin-bottom:9px}
+/* Isla de navegación fija, cerca del pulgar. */
+.dock-shell{position:fixed;z-index:20;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(calc(100% - 25px),520px);padding:8px;border:1px solid var(--edge);border-radius:999px;background:color-mix(in srgb,var(--bg-soft) 91%,transparent);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 13px 38px rgba(0,0,0,.33)}
+.dock{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.dock-btn{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:57px;gap:3px;padding:5px 4px;color:var(--muted);border:1px solid transparent;background:transparent;border-radius:99px;font-weight:800;font-size:10px;letter-spacing:.025em}
+.dock-btn svg{width:18px;height:18px;stroke-width:1.8}
+.dock-btn.active,.dock-btn:active{background:var(--accent);color:var(--on-accent)}
+.dock-btn:focus-visible{outline-offset:-3px}
+/* Visores de imágenes cargadas desde el generador. */
+.visor{position:fixed;inset:0;z-index:60;background:rgba(8,9,12,.98);display:flex;flex-direction:column}
+.visor-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;padding-top:max(12px,env(safe-area-inset-top));color:#fff;font-weight:800;font-size:14px}
+.visor-bar button{border:1px solid rgba(255,255,255,.24);border-radius:100px;background:rgba(255,255,255,.1);color:#fff;padding:10px 16px;font-weight:800}
+.visor-body{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:0 12px max(24px,env(safe-area-inset-bottom))}
+.visor-body img{display:block;width:100%;max-width:900px;height:auto;margin:0 auto 12px;border-radius:12px;background:#fff}
+.empty{color:var(--muted);font-size:13px;margin:15px 4px}
+@media(max-width:370px){
+  .shell{padding-left:12px;padding-right:12px}
+  .hero{padding:22px 18px 24px}
+  .action-btn{gap:11px;padding-right:11px}
+  .action-btn.main .orb{width:67px;height:67px}
+  .action-btn.main .action-title{font-size:25px}
+  .social-grid{grid-template-columns:1fr}
+  .dock-shell{width:calc(100% - 14px);padding:6px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}.sparkles{display:none!important}}
+</style>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"><div class="backdrop-image" id="fondo"></div></div>
+<div class="backdrop-lines" aria-hidden="true"></div>
+<canvas class="sparkles" id="sparkles" aria-hidden="true"></canvas>
+<main class="shell">
+  <div class="topline"><span class="topline-brand">Experiencia digital</span><span class="topline-mark" aria-hidden="true">✦</span></div>
+  <header class="hero" id="inicio">
+    <div class="hero-ornament" aria-hidden="true"><span>✦</span></div>
+    <div class="logo-frame"><div class="logo" id="logo"></div></div>
+    <span class="hero-kicker" id="hero-kicker">Bienvenido</span>
+    <h1 id="nombre"></h1>
+    <p class="desc" id="desc"></p>
+    <div class="hero-end" aria-hidden="true"><span></span></div>
+  </header>
+  <a class="promo" id="oferta-link" target="_blank" rel="noopener noreferrer" hidden>
+    <span class="promo-emblem" aria-hidden="true">✦</span>
+    <span class="promo-copy"><span class="promo-small">Selección especial</span><span class="promo-title" id="oferta-titulo">OFERTAS DEL DÍA</span></span>
+    <span class="promo-arrow" aria-hidden="true">↗</span>
+  </a>
+  <section id="explorar-sec">
+    <div class="chapter"><span class="chapter-num">01</span><div class="chapter-copy"><h2>Descubre nuestro espacio</h2><p>Todo lo que necesitas, a un toque.</p></div><span class="chapter-line"></span></div>
+    <div class="actions" id="actions"></div>
+    <p class="empty" id="actions-empty" hidden>No hay accesos configurados para este menú.</p>
+  </section>
+  <section class="sheet" id="redes-sec" hidden>
+    <div class="sheet-heading"><span class="sheet-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c-4 5-4 11 0 16M12 4c4 5 4 11 0 16"/></svg></span><div><h2>Conecta con nosotros</h2><p>Encuéntranos en nuestras redes</p></div></div>
+    <div class="social-grid" id="redes"></div>
+  </section>
+  <section class="sheet" id="pago-sec" hidden>
+    <div class="sheet-heading"><span class="sheet-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span><div><h2>Datos de transferencia</h2><p>Copia los datos sin complicaciones</p></div></div>
+    <div class="payment-list" id="pago"></div>
+    <button type="button" class="copyall" id="copyall"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>Copiar todos los datos</button>
+  </section>
+  <footer class="footer" id="footer"></footer>
+</main>
+<nav class="dock-shell" aria-label="Navegación rápida"><div class="dock" id="dock">
+  <button type="button" class="dock-btn active" data-target="inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 9-8 9 8"/><path d="M5 10v11h14V10"/></svg><span>Inicio</span></button>
+  <button type="button" class="dock-btn" data-target="explorar-sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span>Explorar</span></button>
+  <button type="button" class="dock-btn" data-target="redes-sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="19" r="2"/><path d="m8 11 8-5m-8 7 8 5"/></svg><span>Redes</span></button>
+  <button type="button" class="dock-btn" data-target="pago-sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M2 10h20"/></svg><span>Pagar</span></button>
+</div></nav>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const el = (tag, className, content) => {const e=document.createElement(tag);if(className)e.className=className;if(content!==undefined)e.textContent=content;return e;};
+const ICON={
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"><path d="M4 4.5C8 3.5 10 4 12 5.4c2-1.4 4-1.9 8-.9v14.9c-4-1-6-.5-8 .9-2-1.4-4-1.9-8-.9Z"/><path d="M12 5.4v14.9"/></svg>',
+  pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"><path d="M12 21s7-6.3 7-12a7 7 0 1 0-14 0c0 5.7 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.8"><path d="m12 2.5 3.1 6.3 6.9 1-5 4.9 1.2 6.9-6.2-3.3-6.2 3.3 1.2-6.9-5-4.9 6.9-1Z"/></svg>'
+};
+const SOCIAL={
+  instagram:'<svg viewBox="0 0 24 24" fill="none" stroke="#C13584" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.6" r="1.1" fill="#F56040" stroke="none"/></svg>',
+  whatsapp:'<svg viewBox="0 0 24 24"><path fill="#25D366" d="M12.02 2a9.98 9.98 0 0 0-8.6 15.08L2 22l5.08-1.34A10 10 0 1 0 12.02 2Z"/><path fill="#fff" d="M17.8 14.67c-.22-.12-1.36-.68-1.57-.76-.22-.07-.37-.11-.53.12-.15.22-.6.76-.73.91-.14.15-.27.17-.49.06a7.5 7.5 0 0 1-2.2-1.35 8.2 8.2 0 0 1-1.52-1.88c-.16-.27 0-.4.11-.53.1-.1.22-.27.33-.4.12-.13.15-.23.23-.38.07-.15.04-.28-.02-.4-.05-.1-.53-1.26-.73-1.72-.2-.46-.39-.4-.54-.41h-.45c-.15 0-.4.06-.61.28-.21.22-.8.78-.8 1.9s.82 2.2.94 2.35c.11.15 1.61 2.45 3.9 3.44.54.24.97.38 1.3.49.54.17 1.03.15 1.42.09.43-.06 1.36-.55 1.55-1.08.19-.54.19-1 .14-1.08-.06-.1-.2-.15-.42-.27Z"/></svg>',
+  facebook:'<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" fill="#1877F2"/><path d="M14.1 21V13.3h2.5l.35-3.05H14.1V8.3c0-.89.24-1.5 1.53-1.5h1.47V4.1a20 20 0 0 0-2.12-.1c-2.1 0-3.54 1.28-3.54 3.63v2.62H9v3.05h2.44V21Z" fill="#fff"/></svg>',
+  tiktok:'<svg viewBox="0 0 24 24"><path fill="#25F4EE" d="M14 2h2.6c.2 2.1 1.45 3.5 3.5 3.6v2.8c-1.4 0-2.6-.4-3.65-1.1v6.6a5.55 5.55 0 1 1-5.6-5.53c.45 0 .83.04 1.18.13v2.9a2.7 2.7 0 1 0 1.97 2.6V2Z"/><path fill="#FE2C55" d="M15 2h2.4c.25 2.05 1.36 3.4 3.3 3.57v2.64c-1.36-.03-2.65-.42-3.7-1.11v6.78a5.5 5.5 0 0 1-9.4 3.84 5.5 5.5 0 0 1 3.42-9.3v2.87a2.7 2.7 0 1 0 3.98 2.38V2Z" opacity=".78"/><path fill="#20252b" d="M14.5 2h2.15c.2 2.03 1.45 3.33 3.32 3.52v2.05A7 7 0 0 1 16.6 6.3v7.3a5.3 5.3 0 1 1-5.3-5.23v2.55a2.75 2.75 0 1 0 3.2 2.72V2Z"/></svg>',
+  youtube:'<svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4.3" fill="#FF0033"/><path d="m10 8.2 6 3.8-6 3.8Z" fill="#fff"/></svg>',
+  x:'<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" fill="#16191d"/><path d="M6.5 6.3h2.8l8.4 11.4h-2.8Zm10.6 0h1.5L7.2 17.7H5.7Z" fill="#fff"/></svg>',
+  web:'<svg viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>'
+};
+const seg = u => (typeof u==='string' && /^https?:\/\//i.test(u)) ? u : '';
+const segImg = u => (typeof u==='string' && (/^https?:\/\//i.test(u) || /^data:image\/(png|jpeg|webp);base64,[a-z0-9+/=]+$/i.test(u))) ? u : '';
+function tipoRed(r){const s=(String(r.nombre||'')+' '+String(r.url||'')).toLowerCase();if(/instagram/.test(s))return 'instagram';if(/whatsapp|wa\.me/.test(s))return 'whatsapp';if(/facebook|fb\.com/.test(s))return 'facebook';if(/tiktok/.test(s))return 'tiktok';if(/youtube|youtu\.be/.test(s))return 'youtube';if(/twitter|x\.com/.test(s))return 'x';return 'web';}
+function copiar(texto,boton){
+  const valor=String(texto);
+  const copiarFallback=()=>{const a=el('textarea');a.value=valor;a.style.cssText='position:fixed;left:-9999px;top:0;opacity:0';document.body.appendChild(a);a.select();const ok=document.execCommand('copy');a.remove();if(!ok)throw Error('No se pudo copiar');};
+  const terminar=()=>{const antes=boton.textContent;boton.textContent='¡Copiado!';boton.classList.add('ok');setTimeout(()=>{boton.textContent=antes;boton.classList.remove('ok');},1400);};
+  return (navigator.clipboard && window.isSecureContext ? navigator.clipboard.writeText(valor) : Promise.reject())
+    .catch(copiarFallback).then(terminar).catch(()=>{boton.textContent='Mantén pulsado para copiar';});
+}
+function abrirVisor(imagenes,origen,nombre){
+  const previo=document.activeElement;
+  const v=el('div','visor');v.setAttribute('role','dialog');v.setAttribute('aria-modal','true');v.setAttribute('aria-label',nombre);
+  const barra=el('div','visor-bar');barra.appendChild(el('span','',nombre));
+  const cerrarBtn=el('button','','Cerrar ✕');cerrarBtn.type='button';
+  const cuerpo=el('div','visor-body');
+  imagenes.forEach((url,i)=>{const img=el('img');img.src=url;img.alt=nombre+', página '+(i+1)+' de '+imagenes.length;img.loading=i>0?'lazy':'eager';cuerpo.appendChild(img);});
+  const overflow=document.body.style.overflow;
+  const tecla=e=>{if(e.key==='Escape')cerrar();};
+  function cerrar(){v.remove();document.body.style.overflow=overflow;document.removeEventListener('keydown',tecla);(origen||previo)?.focus?.();}
+  cerrarBtn.onclick=cerrar;barra.appendChild(cerrarBtn);v.appendChild(barra);v.appendChild(cuerpo);document.body.appendChild(v);document.body.style.overflow='hidden';document.addEventListener('keydown',tecla);cerrarBtn.focus();
+}
+function accion({titulo,kicker,sub,icono,url,onClick,principal}){
+  const a=el(onClick?'button':'a','action-btn'+(principal?' main':''));
+  if(onClick){a.type='button';a.onclick=()=>onClick(a);}else{a.href=url;a.target='_blank';a.rel='noopener noreferrer';}
+  const med=el('span','orb');med.innerHTML=icono;med.setAttribute('aria-hidden','true');
+  const texto=el('span','action-text');texto.appendChild(el('span','action-kicker',kicker));texto.appendChild(el('span','action-title',titulo));texto.appendChild(el('span','action-caption',sub));
+  a.append(med,texto,el('span','action-arrow','↗'));
+  $('actions').appendChild(a);
+}
+function prepararDock(){
+  const botones=[...document.querySelectorAll('.dock-btn')];
+  for(const b of botones){
+    const sec=$(b.dataset.target);b.hidden=!sec||sec.hidden;
+    b.onclick=()=>{sec.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});botones.forEach(x=>x.classList.toggle('active',x===b));};
+  }
+  const visibles=botones.filter(b=>!b.hidden);
+  $('dock').style.gridTemplateColumns='repeat('+Math.max(1,visibles.length)+', minmax(0,1fr))';
+  if('IntersectionObserver' in window){
+    const obs=new IntersectionObserver(entries=>{
+      for(const entry of entries){if(entry.isIntersecting){for(const b of visibles)b.classList.toggle('active',b.dataset.target===entry.target.id);}}
+    },{rootMargin:'-12% 0px -57% 0px',threshold:0});
+    visibles.forEach(b=>obs.observe($(b.dataset.target)));
+  }
+}
+function render(raw){
+  // Mismas claves JSON que los menús anteriores. No se cambia el generador.
+  const C=raw && typeof raw==='object' ? raw : {};
+  const nombre=String(C.nombre||'Tu negocio');
+  const desc=String(C.descripcion||'');
+  const esCatalogo=C.tipoCarta==='catalogo';
+  const carta=seg(C.cartaUrl),maps=seg(C.mapsUrl),resena=seg(C.resenaUrl);
+  const logo=segImg(C.logo),fondo=segImg(C.fondo);
+  const imagenes=(Array.isArray(C.cartaImagenes)?C.cartaImagenes:[]).filter(segImg).slice(0,12);
+  const redes=(Array.isArray(C.redes)?C.redes:[]).filter(r=>r&&seg(r.url));
+  const transferencia=(C.transferencia&&typeof C.transferencia==='object'&&!Array.isArray(C.transferencia))?C.transferencia:{};
+  document.documentElement.dataset.estilo=C.estilo==='claro'?'claro':'oscuro';
+  if(/^#[0-9a-f]{3}(?:[0-9a-f]{3})?$/i.test(C.acento||'')){
+    const color=C.acento;
+    document.documentElement.style.setProperty('--accent',color);
+    const s=color.slice(1);const hex=s.length===3?[...s].map(v=>v+v).join(''):s;
+    const rgb=[0,2,4].map(i=>parseInt(hex.slice(i,i+2),16)/255);
+    const l=rgb.map(v=>v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4));
+    document.documentElement.style.setProperty('--on-accent',l[0]*.2126+l[1]*.7152+l[2]*.0722>.42?'#161516':'#ffffff');
+    document.documentElement.style.setProperty('--accent-soft','color-mix(in srgb,'+color+' 17%,transparent)');
+  }
+  if(fondo){const node=$('fondo');const n=Number(C.fondoIntensidad);node.style.backgroundImage='url('+JSON.stringify(fondo)+')';node.style.opacity=String(C.fondoIntensidad!==undefined&&Number.isFinite(n)?Math.max(0,Math.min(100,n))/100:.58);}
+  $('nombre').textContent=nombre;$('desc').textContent=desc;
+  $('hero-kicker').textContent=esCatalogo?'Catálogo digital exclusivo':'Bienvenido a nuestro espacio';
+  document.title=nombre+' · '+(esCatalogo?'Catálogo':'Menú')+' Luxury';
+  if(logo){const img=el('img');img.src=logo;img.alt='Logo de '+nombre;img.onerror=()=>{img.remove();$('logo').textContent=nombre.charAt(0).toUpperCase();};$('logo').appendChild(img);}else $('logo').textContent=nombre.charAt(0).toUpperCase();
+  // Ofertas: URL tradicional y soporte adicional para imagen PNG/JPG/WebP del generador.
+  const enlace=$('oferta-link');const ofUrl=seg(C.ofertaUrl);
+  const ofImagen=segImg(C.ofertaImagen)||segImg(C.ofertaArchivo)||segImg(C.ofertaPng);
+  if(C.ofertaActiva===true&&(ofUrl||ofImagen)){
+    $('oferta-titulo').textContent=String(C.ofertaTexto||'').trim().slice(0,80)||'OFERTAS DEL DÍA';
+    enlace.hidden=false;
+    if(ofUrl){enlace.href=ofUrl;enlace.target='_blank';}
+    else if(ofImagen){enlace.href='#';enlace.removeAttribute('target');enlace.addEventListener('click',e=>{e.preventDefault();abrirVisor([ofImagen],enlace,'Oferta especial');});}
+  }
+  if(imagenes.length){
+    accion({titulo:esCatalogo?'Ver catálogo':'Ver carta',kicker:'Selección principal',sub:'Descubre lo que tenemos para ti',icono:ICON.book,principal:true,onClick:b=>abrirVisor(imagenes,b,esCatalogo?'Catálogo':'Carta')});
+  }else if(carta){accion({titulo:esCatalogo?'Ver catálogo':'Ver carta',kicker:'Selección principal',sub:'Descubre lo que tenemos para ti',icono:ICON.book,principal:true,url:carta});}
+  if(maps)accion({titulo:'Cómo llegar',kicker:'Visítanos',sub:'Ubicación y ruta',icono:ICON.pin,url:maps});
+  if(resena)accion({titulo:'Dejar reseña',kicker:'Tu opinión',sub:'Comparte tu experiencia',icono:ICON.star,url:resena});
+  if(!$('actions').children.length){$('actions-empty').hidden=false;}
+  if(redes.length){
+    $('redes-sec').hidden=false;
+    for(const r of redes){
+      const a=el('a','social-btn');a.href=seg(r.url);a.target='_blank';a.rel='noopener noreferrer';
+      const tipo=tipoRed(r);const icono=el('span','social-symbol '+tipo);icono.innerHTML=SOCIAL[tipo];icono.setAttribute('aria-hidden','true');
+      a.append(icono,el('span','social-label',String(r.nombre||tipo)));$('redes').appendChild(a);
+    }
+  }
+  const pagos=Object.entries(transferencia).filter(([,v])=>v!==null&&v!==undefined&&String(v).length>0);
+  if(pagos.length){
+    $('pago-sec').hidden=false;
+    for(const [clave,valor] of pagos){const v=String(valor),r=el('div','pay-row'),info=el('div','pay-info'),boton=el('button','copy','Copiar');boton.type='button';boton.setAttribute('aria-label','Copiar '+clave);boton.onclick=()=>copiar(v,boton);info.append(el('small','',clave),el('span','',v));r.append(info,boton);$('pago').appendChild(r);}
+    $('copyall').onclick=()=>copiar(pagos.map(([k,v])=>k+': '+v).join('\n'),$('copyall'));
+  }
+  $('footer').textContent=(esCatalogo?'Catálogo digital':'Menú digital')+' · '+nombre;
+  prepararDock();
+}
+// Partículas doradas sutiles: baja carga para móviles, sin tapar los botones.
+(function brillos(){
+  const cv=$('sparkles'),ctx=cv.getContext('2d');if(!ctx||!window.requestAnimationFrame)return;
+  const reducir=window.matchMedia('(prefers-reduced-motion: reduce)');if(reducir.matches)return;
+  let w=1,h=1,dpr=1,raf=0,prev=0,prevY=null,ultimoScroll=scrollY;
+  const motas=[];
+  function resize(){w=Math.max(1,window.innerWidth);h=Math.max(1,window.innerHeight);dpr=Math.min(2,devicePixelRatio||1);cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);}
+  function emitir(n,desde){for(let i=0;i<n&&motas.length<50;i++)motas.push({x:Math.random()*w,y:desde===null?Math.random()*h:desde,vx:(Math.random()-.5)*18,vy:-7-Math.random()*20,r:.6+Math.random()*1.8,life:0,max:.7+Math.random()*1.4});if(!raf){prev=0;raf=requestAnimationFrame(draw);}}
+  function draw(t){raf=0;if(document.hidden)return;const dt=Math.min(.05,(t-(prev||t))/1000);prev=t;ctx.clearRect(0,0,w,h);
+    for(let i=motas.length-1;i>=0;i--){const p=motas[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=4*dt;p.life+=dt;const a=Math.max(0,Math.min(1,p.life*4,(p.max-p.life)*2))*.58;if(a<=0||p.y<0){motas.splice(i,1);continue;}ctx.fillStyle='rgba(224,190,122,'+a+')';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,2*Math.PI);ctx.fill();}
+    if(motas.length)raf=requestAnimationFrame(draw);
+  }
+  let medidaPendiente=false;function recalc(){if(medidaPendiente)return;medidaPendiente=true;requestAnimationFrame(()=>{medidaPendiente=false;resize();});}
+  window.addEventListener('resize',recalc,{passive:true});
+  window.addEventListener('wheel',e=>{if(!e.ctrlKey)emitir(Math.min(3,Math.max(1,Math.round(Math.abs(e.deltaY)/90))),h*.72);},{passive:true});
+  window.addEventListener('touchstart',e=>{prevY=e.touches.length===1?e.touches[0].clientY:null;},{passive:true});
+  window.addEventListener('touchmove',e=>{if(e.touches.length!==1||prevY===null)return;const y=e.touches[0].clientY;if(Math.abs(y-prevY)>22)emitir(2,h*.68);prevY=y;},{passive:true});
+  window.addEventListener('touchend',()=>prevY=null,{passive:true});
+  window.addEventListener('scroll',()=>{if(Math.abs(scrollY-ultimoScroll)>18){emitir(1,h*.72);ultimoScroll=scrollY;}},{passive:true});
+  resize();
+})();
+/* Las plantillas comparten exactamente el mismo contrato:
+   menu4_luxury.html?n=slug  → datos/slug.json
+   menu4_luxury.html?d=base64url → datos dentro de la URL.
+   Al abrir este HTML localmente se muestra una demo, sin datos reales. */
+function fallo(detalle){$('nombre').textContent='Página no encontrada';$('desc').textContent='Revisa el enlace o vuelve a escanear el código QR.'+(detalle?' ('+detalle+')':'');$('logo').textContent='!';prepararDock();}
+function decodificar(t){t=t.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';return JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(t),c=>c.charCodeAt(0))));}
+const P=new URLSearchParams(location.search),slug=P.get('n')||'',cod=P.get('d');
+const demo={nombre:'Maison Étoile',descripcion:'Una experiencia única, creada para ti.\nDescubre nuestra selección y conecta con nosotros.',tipoCarta:'catalogo',estilo:'oscuro',cartaUrl:'https://example.com/catalogo',mapsUrl:'https://maps.google.com/',resenaUrl:'https://www.google.com/',ofertaActiva:true,ofertaTexto:'Descubre nuestras ofertas',ofertaUrl:'https://example.com/ofertas',redes:[{nombre:'Instagram',url:'https://instagram.com/'},{nombre:'WhatsApp',url:'https://wa.me/56900000000'},{nombre:'TikTok',url:'https://tiktok.com/'}],transferencia:{Banco:'Banco Ejemplo',Titular:'Nombre de ejemplo',Cuenta:'000000000'}};
+if(cod){try{render(decodificar(cod));}catch(e){fallo('datos incompletos o inválidos');}}
+else if(/^[a-z0-9-]+$/i.test(slug)){fetch('datos/'+slug+'.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('No se encontró datos/'+slug+'.json');return r.json();}).then(render).catch(e=>fallo(e.message));}
+else if(P.get('demo')==='1'||location.protocol==='file:')render(demo);
+else fallo('faltan los datos del negocio');
+</script>
+</body>
+</html>
