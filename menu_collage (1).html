@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Collage de recuerdos</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500;1,600&family=Playfair+Display:ital,wght@1,600&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ac:#9a3b4a;--g:#b48a52;--paper:#f7f4ee;--ink:#2b2622;--mut:#7d726a;color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Jost',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.wrap{margin:10px;padding:34px 16px 110px;border:1px solid var(--g);border-radius:18px;outline:1px solid rgba(180,138,82,.35);outline-offset:-7px;text-align:center}
+.sup{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--mut)}
+h1{font:500 clamp(30px,9vw,44px)/1.1 'Cormorant Garamond',serif;margin:10px 0 0}
+.nm{font:italic 600 clamp(54px,18vw,84px)/1.05 'Playfair Display',serif;color:var(--ac);margin:0}
+.sub{font:italic 500 17px 'Cormorant Garamond',serif;color:var(--mut);margin:6px 0 0}
+.hr{display:flex;align-items:center;gap:10px;margin:22px 4px;color:var(--g)}
+.hr::before,.hr::after{content:"";flex:1;height:1px;background:rgba(180,138,82,.6)}
+.hr span{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--mut);text-align:center}
+.hr i{width:7px;height:7px;border-radius:50%;background:var(--g)}
+#g{display:grid;grid-template-columns:1fr 1fr;gap:18px 14px}
+.pol{position:relative;padding:8px 8px 22px;background:#fffdf9;border:0;border-radius:3px;box-shadow:0 6px 18px rgba(60,40,20,.14);transform:rotate(var(--r,0deg));transition:transform .2s,box-shadow .2s;text-align:left}
+.pol:nth-child(odd){--r:-1.2deg}.pol:nth-child(even){--r:1.1deg}
+.pol:hover{transform:rotate(0) translateY(-3px);box-shadow:0 12px 24px rgba(60,40,20,.2)}
+.pol img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;background:#eee6dc}
+.pol.big{grid-column:1/3}.pol.big img{aspect-ratio:4/5}
+.pol small{position:absolute;left:10px;bottom:4px;font-size:11px;color:var(--ac);letter-spacing:.04em}
+.q{grid-column:1/3;padding:22px 18px;border:1px solid rgba(180,138,82,.6);border-radius:10px;background:#f4ede3}
+.q p{margin:0;font:italic 500 21px/1.5 'Cormorant Garamond',serif;color:var(--ac)}
+.q em{display:block;margin-top:10px;font-size:12px;font-style:normal;color:var(--mut)}
+.sec{grid-column:1/3;margin:6px 0 -4px}.sec .hr{margin:0}
+.cl{margin-top:8px}.cl p{margin:0;font:italic 500 19px/1.5 'Cormorant Garamond',serif}.cl .f{font-size:23px;color:var(--ac);margin-top:4px}
+.bar{position:fixed;left:0;right:0;bottom:0;display:flex;gap:10px;justify-content:center;padding:12px 14px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--paper) 40%)}
+.bt{padding:11px 18px;border:1px solid var(--ac);border-radius:99px;background:var(--ac);color:#fff;font-size:13px;font-weight:500}
+.bt.o{background:#fffdf9;color:var(--ac)}
+/* ventana de la foto */
+#mo{position:fixed;inset:0;z-index:5;display:grid;place-items:center;perspective:1400px;background:rgba(40,28,20,.55);backdrop-filter:blur(3px)}
+#cd{position:relative;width:min(88vw,380px);height:min(82vh,600px);animation:up .5s cubic-bezier(.2,.8,.3,1) both}
+@keyframes up{from{opacity:0;transform:translateY(60px) scale(.7) rotate(-8deg)}60%{transform:translateY(-14px) scale(1.03) rotate(1deg)}to{opacity:1;transform:none}}
+#fl{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.3,.7,.2,1)}
+#cd.v #fl{transform:rotateY(180deg)}
+.fc{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fffdf9;border-radius:6px;box-shadow:0 24px 50px rgba(0,0,0,.4);padding:12px}
+.fc.fr img{width:100%;height:100%;object-fit:contain;background:#efe7dc}
+.bk{transform:rotateY(180deg);display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.bk h3{margin:0;font:italic 600 22px 'Cormorant Garamond',serif;color:var(--ac);display:flex;align-items:center;gap:10px}
+.bk h3 img{width:42px;height:54px;object-fit:cover;border-radius:2px}
+#rl{flex:1;overflow:auto;display:flex;flex-direction:column;gap:9px;padding-right:2px}
+.rv{padding:9px 11px;background:#f4ede3;border-radius:8px;text-align:left}
+.rv b{font-size:13px}.rv span{font-size:11px;color:var(--mut);margin-left:6px}.rv p{margin:3px 0 0;font-size:14px;line-height:1.4;overflow-wrap:anywhere}
+.vac{color:var(--mut);font:italic 16px 'Cormorant Garamond',serif;text-align:center;margin:auto}
+.bk input,.bk textarea{width:100%;padding:9px 11px;border:1px solid rgba(180,138,82,.6);border-radius:8px;background:#fff;font:inherit;font-size:14px}
+.bk textarea{resize:none;height:64px;margin-top:6px}
+.row{display:flex;gap:8px;margin-top:6px}.row .bt{flex:1;padding:10px}
+#x{position:absolute;top:-16px;right:-10px;width:36px;height:36px;border-radius:50%;border:0;background:#fffdf9;font-size:20px;box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:2}
+/* panel de fotos */
+#pn{position:fixed;inset:0;z-index:6;background:rgba(40,28,20,.55);display:grid;align-items:end}
+#pn>div{background:var(--paper);border-radius:18px 18px 0 0;max-height:80vh;overflow:auto;padding:18px 16px 26px}
+#pn h2{margin:0 0 4px;font:italic 600 24px 'Cormorant Garamond',serif;color:var(--ac)}
+.it{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(180,138,82,.3);font-size:13px}
+.it img{width:42px;height:54px;object-fit:cover;border-radius:3px}.it span{flex:1}.it.off img{opacity:.35}
+.mn{border:1px solid var(--g);background:#fff;border-radius:8px;padding:6px 10px;font-size:12px}
+[hidden]{display:none!important}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
+</style>
+</head>
+<body>
+<main class="wrap" id="app" hidden>
+  <div class="sup" id="sup"></div>
+  <h1 id="tit"></h1><p class="nm" id="nm"></p>
+  <p class="sub" id="sub"></p>
+  <div class="hr"><i></i></div>
+  <section id="g"></section>
+  <div class="hr"><i></i></div>
+  <div class="cl"><p id="c1"></p><p class="f" id="c2"></p></div>
+</main>
+<p id="nf" style="text-align:center;padding:60px 20px;font:italic 20px 'Cormorant Garamond',serif" hidden></p>
+
+<div class="bar" id="bar" hidden>
+  <button class="bt" id="add" type="button">+ Agregar fotos</button>
+  <button class="bt o" id="sel" type="button">Elegir fotos</button>
+  <input type="file" id="fi" accept="image/*" multiple hidden>
+</div>
+
+<div id="mo" hidden>
+  <div id="cd">
+    <button id="x" type="button" aria-label="Cerrar">×</button>
+    <div id="fl">
+      <div class="fc fr"><img id="mi" alt="Recuerdo"></div>
+      <div class="fc bk">
+        <h3><img id="mt" alt=""><span>Recuerdos de este momento</span></h3>
+        <div id="rl"></div>
+        <div>
+          <input id="rn" maxlength="40" placeholder="Tu nombre">
+          <textarea id="rt" maxlength="400" placeholder="Escribe algo sobre este momento…"></textarea>
+          <div class="row"><button class="bt o" id="vf" type="button">Ver foto</button><button class="bt" id="env" type="button">Dejar mensaje</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="pn" hidden><div><h2>Elige qué fotos se ven</h2><div id="pl"></div><button class="bt" id="pc" type="button" style="margin-top:14px;width:100%">Listo</button></div></div>
+
+<script>
+const $=id=>document.getElementById(id),P=new URLSearchParams(location.search);
+let D,K,L={h:[],f:[],r:{}},R={},cur=null,prev=false,S=[],H={},own=true;
+const dec=t=>{t=t.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';return JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(t),c=>c.charCodeAt(0))))};
+const save=()=>{try{localStorage.setItem('col_'+K,JSON.stringify(L))}catch(e){alert('No hay más espacio en este dispositivo para guardar fotos.')}};
+const db=()=>(D.db||'').replace(/\/$/,'');
+const sh=()=>!!db()&&!prev,u=p=>db()+'/'+K+'/'+p+'.json';
+const oculta=k=>sh()?!!H[k]:L.h.includes(k);
+async function hs(t){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){let h=5381;for(const c of t)h=(h*33^c.charCodeAt(0))>>>0;return'x'+h}}
+const todas=()=>[...(D.fotos||[]).map((s,i)=>({k:'g'+i,s})),...(sh()?S:L.f.map(f=>({k:f.k,s:f.s,own:1})))];
+const rv=k=>[...(R[k]||[]),...(L.r[k]||[])].sort((a,b)=>a.d-b.d);
+const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+
+function render(d,vista){
+  D=d;K=vista?'vista':(d.id||'x');
+  try{L=Object.assign({h:[],f:[],r:{}},JSON.parse(localStorage.getItem('col_'+K)||'{}'))}catch(e){}
+  if(vista)L={h:[],f:[],r:{}};
+  document.documentElement.style.setProperty('--ac',d.acento||'#9a3b4a');
+  $('sup').textContent=d.sup||'';$('tit').textContent=d.titulo||'';$('nm').textContent=d.nombre||'';
+  $('sub').textContent=d.sub?'— '+d.sub+' —':'';$('c1').textContent=d.cierre1||'';$('c2').textContent=d.cierre2||'';
+  document.title=(d.titulo||'')+' '+(d.nombre||'');
+  $('app').hidden=false;$('nf').hidden=true;$('bar').hidden=d.agregar===false&&false;
+  $('add').hidden=d.agregar===false;
+  pintar();
+  own=!(sh()&&d.ch)||localStorage.getItem('col_own_'+K)===d.ch;
+  $('sel').textContent=own?'Elegir fotos':'Soy el dueño';
+  if(sh())cargarDb();
+}
+function quote(){const q=el('div','q');q.appendChild(el('p','',D.frase||''));if(D.nota)q.appendChild(el('em','',D.nota));return q}
+function pintar(){
+  const g=$('g');g.innerHTML='';
+  const v=todas().filter(p=>!oculta(p.k)),els=v.map((p,i)=>{
+    const b=el('button','pol'+(i===0?' big':''));b.type='button';
+    const im=new Image();im.src=p.s;im.alt='Foto '+(i+1);im.loading='lazy';b.appendChild(im);
+    const n=rv(p.k).length;if(n)b.appendChild(el('small','','♡ '+n));
+    b.onclick=()=>abrir(p);return b});
+  if(D.quote!==false&&(D.frase||D.nota))els.splice(Math.min(4,els.length),0,quote());
+  if(v.length>6){const s=el('div','sec'),h=el('div','hr');h.appendChild(el('span','',D.seccion||'Y muchos recuerdos más…'));s.appendChild(h);els.splice(els.findIndex(e=>e.classList.contains('q'))+1+2,0,s)}
+  els.forEach(e=>g.appendChild(e));
+  if(!v.length)g.appendChild(el('p','q','Aún no hay fotos. Toca “Agregar fotos”.'));
+}
+/* datos compartidos (Firebase): fotos, ocultas y reseñas. Las fotos se guardan en caché del celular. */
+async function foto(id){const url=u('f/'+id),mk=o=>o&&o.s?{k:'f'+id,id,s:o.s}:null;
+  try{const c=await caches.open('col');let r=await c.match(url);if(!r){r=await fetch(url);if(!r.ok)return null;await c.put(url,r.clone())}return mk(await r.json())}
+  catch(e){try{return mk(await(await fetch(url)).json())}catch(x){return null}}}
+async function cargarDb(){
+  try{const [rr,hh,ff]=await Promise.all([fetch(u('r')).then(r=>r.json()),fetch(u('h')).then(r=>r.json()),fetch(db()+'/'+K+'/f.json?shallow=true').then(r=>r.json())]);
+    R={};Object.values(rr||{}).forEach(x=>{(R[x.k]=R[x.k]||[]).push(x)});H=hh||{};pintar();
+    S=(await Promise.all(Object.keys(ff||{}).sort().map(foto))).filter(Boolean);pintar();
+  }catch(e){}}
+/* foto + reseñas */
+function abrir(p){
+  cur=p;$('mi').src=p.s;$('mt').src=p.s;listar();
+  $('rt').value='';try{$('rn').value=localStorage.getItem('col_nom')||''}catch(e){}
+  const c=$('cd');c.classList.remove('v');c.style.animation='none';void c.offsetWidth;c.style.animation='';
+  $('mo').hidden=false;
+  setTimeout(()=>c.classList.add('v'),matchMedia('(prefers-reduced-motion:reduce)').matches?0:750);
+}
+function listar(){
+  const L2=$('rl');L2.innerHTML='';const a=rv(cur.k);
+  if(!a.length)L2.appendChild(el('p','vac','Sé el primero en dejar un recuerdo aquí.'));
+  a.forEach(r=>{const d=el('div','rv'),b=el('b','',r.n||'Alguien');d.appendChild(b);
+    d.appendChild(el('span','',new Date(r.d).toLocaleDateString('es-CL',{day:'numeric',month:'short',year:'numeric'})));
+    d.appendChild(el('p','',r.t));L2.appendChild(d)});
+  L2.scrollTop=L2.scrollHeight;
+}
+$('env').onclick=async()=>{
+  const t=$('rt').value.trim();if(!t)return $('rt').focus();
+  const n=$('rn').value.trim()||'Alguien';try{localStorage.setItem('col_nom',n)}catch(e){}
+  const r={k:cur.k,n,t,d:Date.now()};let ok=false;
+  if(sh()&&!cur.own){try{const x=await fetch(db()+'/'+K+'/r.json',{method:'POST',body:JSON.stringify(r)});ok=x.ok}catch(e){}
+    if(ok)(R[cur.k]=R[cur.k]||[]).push(r)}
+  if(!ok){(L.r[cur.k]=L.r[cur.k]||[]).push(r);save()}
+  $('rt').value='';listar();
+};
+$('vf').onclick=()=>$('cd').classList.toggle('v');
+const cerrar=()=>{$('mo').hidden=true;pintar()};
+$('x').onclick=cerrar;$('mo').onclick=e=>{if(e.target.id==='mo')cerrar()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('mo').hidden)cerrar()});
+/* agregar y elegir fotos */
+function achicar(f,m,q){return new Promise(ok=>{const u=URL.createObjectURL(f),i=new Image();i.onload=()=>{const r=Math.min(1,m/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=i.width*r;c.height=i.height*r;c.getContext('2d').drawImage(i,0,0,c.width,c.height);URL.revokeObjectURL(u);ok(c.toDataURL('image/jpeg',q))};i.onerror=()=>ok(null);i.src=u})}
+$('add').onclick=()=>$('fi').click();
+$('fi').onchange=async e=>{
+  const fs=[...e.target.files];e.target.value='';$('add').disabled=true;
+  for(const f of fs){const s=await achicar(f,sh()?700:1000,sh()?.6:.8);if(!s)continue;
+    if(sh()){$('add').textContent='Subiendo…';
+      try{const r=await(await fetch(u('f'),{method:'POST',body:JSON.stringify({s,d:Date.now()})})).json();S.push({k:'f'+r.name,id:r.name,s})}catch(x){alert('No se pudo subir la foto. Revisa tu conexión.')}}
+    else L.f.push({k:'c'+Date.now()+Math.random().toString(36).slice(2,5),s})}
+  $('add').disabled=false;$('add').textContent='+ Agregar fotos';save();pintar()};
+$('sel').onclick=async()=>{
+  if(!own){const c=prompt('Clave del dueño del collage:');if(c===null)return;
+    if(await hs(c.trim())!==D.ch)return alert('Clave incorrecta.');
+    own=true;$('sel').textContent='Elegir fotos';try{localStorage.setItem('col_own_'+K,D.ch)}catch(e){}}
+  $('pn').hidden=false;panel()};
+$('pc').onclick=()=>{$('pn').hidden=true;pintar()};
+function panel(){
+  const l=$('pl');l.innerHTML='';
+  todas().forEach((p,i)=>{const h=L.h.includes(p.k),r=el('div','it'+(h?' off':''));
+    const im=new Image();im.src=p.s;im.alt='';r.appendChild(im);r.appendChild(el('span','','Foto '+(i+1)+(h?' · oculta':'')));
+    const b=el('button','mn',h?'Mostrar':'Ocultar');b.type='button';b.onclick=async()=>{if(sh()){try{await fetch(u('h/'+p.k),h?{method:'DELETE'}:{method:'PUT',body:'true'});if(h)delete H[p.k];else H[p.k]=true}catch(e){return alert('No se pudo guardar el cambio.')}}
+      else{L.h=h?L.h.filter(x=>x!==p.k):[...L.h,p.k];save()}panel()};r.appendChild(b);
+    if(p.own||p.id){const q=el('button','mn','Quitar');q.type='button';
+      q.onclick=async()=>{if(p.id){try{await fetch(u('f/'+p.id),{method:'DELETE'})}catch(e){return alert('No se pudo quitar la foto.')}S=S.filter(x=>x.k!==p.k)}else{L.f=L.f.filter(x=>x.k!==p.k);save()}panel()};r.appendChild(q)}
+    l.appendChild(r)});
+}
+/* carga: ?d=datos  |  ?n=slug  |  vista previa del generador */
+const nf=m=>{$('nf').textContent=m;$('nf').hidden=false};
+if(P.get('d')){try{render(dec(P.get('d')))}catch(e){nf('El link está incompleto o dañado.')}}
+else if(/^[a-z0-9-]+$/i.test(P.get('n')||''))fetch('datos/'+P.get('n')+'.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw 0;return r.json()}).then(d=>{d.id=d.id||P.get('n');render(d)}).catch(()=>nf('Página no encontrada. Vuelve a escanear el código QR.'));
+else if(parent!==window){prev=true;addEventListener('message',e=>{if(e.data&&e.data.t==='collage-vista')render(e.data.d,true)});parent.postMessage({t:'collage-lista'},'*')}
+else nf('El link no incluye los datos del collage.');
+</script>
+</body>
+</html>
